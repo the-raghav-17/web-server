@@ -1,7 +1,7 @@
 /*
- * copyright: Raghav Sharma
- * github:    github.com/the-raghav-17
- * License:   GNU GPLv3
+ * Copyright (c) 2026 Raghav Sharma
+ * License: GNU GPLv3
+ * GitHub: github.com/the-raghav-17
  */
 
 /*
