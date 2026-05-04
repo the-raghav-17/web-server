@@ -19,10 +19,12 @@
 // to the main function
 
 
+// SEE: Should server be a class or a function is sufficient?
+// SEE: Should server construct the socket and save it as private member?
 class Server
 {
 public:
-    void start();
+    void start() const;
 }
 
 
