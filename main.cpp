@@ -5,6 +5,8 @@
  */
 
 /*
+ * main.cpp
+ *
  * Starting point of the program.
  * Simply creates a server object and
  * starts the server.
@@ -16,6 +18,7 @@
 
 int main()
 {
+    // TODO: Add exceptions for the server
     Server server{};
     server.start();
 
