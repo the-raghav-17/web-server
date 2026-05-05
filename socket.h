@@ -31,6 +31,11 @@ enum class Ip_type
 // TODO: Define exceptions for socket
 
 
+// SEE: How can we make socket class more generic
+// by defining an interface and creating different implementation
+// based on operating system and/or if its client or server application
+// that want to create the socket
+
 // TODO: Add implementation of socket class
 class Socket
 {
