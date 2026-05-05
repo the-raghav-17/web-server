@@ -36,17 +36,21 @@ enum class Ip_type
 // based on operating system and/or if its client or server application
 // that want to create the socket
 
-// TODO: Add implementation of socket class
+// TODO: Complete implementation of socket class
 class Socket
 {
 public:
     Socket(const Sock_type &sock_type, const Ip_type &ip_type,
             const std::string &port_no);
 
+    // TODO: Define a destructor to clean up socket resources
+
     void bind();
     void listen(size_t queue_size);
 
 private:
+    // Necessary socket details
+    int         m_sockfd    {};
     Sock_type   m_sock_type {};
     Ip_type     m_ip_type   {};
     std::string m_port_no   {};

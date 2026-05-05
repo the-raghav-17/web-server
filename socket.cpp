@@ -22,10 +22,13 @@
 
 
 // Local helper functions
+// SEE: These functions are local to file, why not make them friend?
 static inline int get_sock_type(const Sock_type &sock_type);
 static inline int get_addr_family(const Ip_type &ip_type);
 
 
+// The socket constructor is supposed to create a socket to which
+// we can listen to or use to connect to a remote
 Socket::Socket(const Sock_type &sock_type, const Ip_type &ip_type, 
     const std::string &port_no):
     
@@ -37,8 +40,8 @@ Socket::Socket(const Sock_type &sock_type, const Ip_type &ip_type,
 
     struct addrinfo hints {};
     std::memset(&hints, 0, sizeof(hints));
-    hints.ai_family    = get_addr_family(ip_type);
-    hints.ai_socktype  = get_sock_type(sock_type);
+    hints.ai_family   = get_addr_family(ip_type);
+    hints.ai_socktype = get_sock_type(sock_type);
 
     // FIX: setting AI_FLAGS to AI_PASSIVE makes this code less generic
     // as this will also happen if its a client application using socket
@@ -48,9 +51,30 @@ Socket::Socket(const Sock_type &sock_type, const Ip_type &ip_type,
     struct addrinfo *res {};
     int status {};
 
-    // FIX: port_no is string type, conver to char *
-    if ((status = getaddrinfo(NULL, port_no, &hints, &res)) == -1) {
+    if ((status = getaddrinfo(NULL, port_no.c_str(), &hints, &res)) == -1) {
         // TODO: throw exception
+    }
+
+    // Now we need to traverse the res linked list and create a socket
+    for (struct addrinfo *p = res; p != NULL; p = p->ai_next) {
+        if ((m_sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
+            continue;
+        }
+        
+        int yes { 1 };
+        if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) {
+            close(m_sockfd);
+            // TODO: Throw exception
+        }
+
+        break;
+    }
+
+    freeaddrinfo(res); // no longer need this
+
+    if (p == NULL) {
+        // we traversed the list without establishing any socket
+        //TODO: Throw exception     
     }
 }
 
