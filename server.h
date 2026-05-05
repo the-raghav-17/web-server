@@ -8,7 +8,7 @@
  * server.h
  *
  * Declaration of server class.
- * /
+ */
 
 
 #ifndef SERVER_H_
@@ -25,7 +25,7 @@ class Server
 {
 public:
     void start() const;
-}
+};
 
 
 #endif // SERVER_H_
