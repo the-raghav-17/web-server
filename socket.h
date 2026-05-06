@@ -40,10 +40,8 @@ enum class Ip_type
 class Socket
 {
 public:
-    Socket(const Sock_type &sock_type, const Ip_type &ip_type,
-            const std::string &port_no);
-
-    // TODO: Define a destructor to clean up socket resources
+    Socket(const Sock_type &sock_type, const Ip_type &ip_type);
+    ~Socket();
 
     void bind();
     void listen(size_t queue_size);
@@ -53,7 +51,6 @@ private:
     int         m_sockfd    {};
     Sock_type   m_sock_type {};
     Ip_type     m_ip_type   {};
-    std::string m_port_no   {};
 };
 
 

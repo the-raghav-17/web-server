@@ -27,54 +27,28 @@ static inline int get_sock_type(const Sock_type &sock_type);
 static inline int get_addr_family(const Ip_type &ip_type);
 
 
-// The socket constructor is supposed to create a socket to which
-// we can listen to or use to connect to a remote
-Socket::Socket(const Sock_type &sock_type, const Ip_type &ip_type, 
-    const std::string &port_no):
-    
+// Socket constructor is supposed to create a generic socket which
+// can be used for both listening and connecting to remote
+Socket::Socket(const Sock_type &sock_type, const Ip_type &ip_type):
     m_sock_type { sock_type },
     m_ip_type   { ip_type },
-    m_port_no   { port_no }
+    m_sockfd    { -1 }   // -1 suggests no socket has been created
 {
-    // TODO: Add exceptions the socket throws
+    const int socktype    { get_sock_type(sock_type) };
+    const int addr_family { get_addr_family(ip_type) };
+    const int protocol    { 0 };
 
-    struct addrinfo hints {};
-    std::memset(&hints, 0, sizeof(hints));
-    hints.ai_family   = get_addr_family(ip_type);
-    hints.ai_socktype = get_sock_type(sock_type);
-
-    // FIX: setting AI_FLAGS to AI_PASSIVE makes this code less generic
-    // as this will also happen if its a client application using socket
-    // which we don't want in that case
-    hints.ai_flags = AI_PASSIVE;
-
-    struct addrinfo *res {};
-    int status {};
-
-    if ((status = getaddrinfo(NULL, port_no.c_str(), &hints, &res)) == -1) {
-        // TODO: throw exception
+    if ((m_sockfd = socket(addr_family, socktype, protocol)) == -1) {
+        // TODO: Throw exception
     }
+}
 
-    // Now we need to traverse the res linked list and create a socket
-    for (struct addrinfo *p = res; p != NULL; p = p->ai_next) {
-        if ((m_sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1) {
-            continue;
-        }
-        
-        int yes { 1 };
-        if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) {
-            close(m_sockfd);
-            // TODO: Throw exception
-        }
 
-        break;
-    }
-
-    freeaddrinfo(res); // no longer need this
-
-    if (p == NULL) {
-        // we traversed the list without establishing any socket
-        //TODO: Throw exception     
+Socket::~Socket()
+{
+    // Close the open socket fd
+    if (m_sockfd != -1) {
+        close(m_sockfd);
     }
 }
 
