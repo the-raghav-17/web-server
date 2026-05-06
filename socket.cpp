@@ -26,6 +26,8 @@
 // SEE: These functions are local to file, why not make them friend?
 static inline int get_sock_type(const Sock_type &sock_type);
 static inline int get_addr_family(const Ip_type &ip_type);
+static struct addrinfo *getaddrinfo_res(const Ip_type &ip_type, 
+                                        const std::string &port_no);
 
 
 // Socket constructor is supposed to create a generic socket which
@@ -56,26 +58,18 @@ Socket::~Socket()
 }
 
 
-void Socket::bind(const std::string &port_no)
+void Socket::bind_to_port(const std::string &port_no)
 {
-    // FIX: This getaddrinfo code can also be put in a static function
-    // local to this file
+    // res is a linked list which consists of all the
+    // info required to bind a socket.
 
-    struct addrinfo hints {};
-    std::memset(&hints, 0, sizeof(hints));
-    hints.ai_family = get_addr_family(m_ip_type);
-    hints.ai_flags  = AI_PASSIVE;
-
-    struct addrinfo *res {};
-    int status { getaddrinfo(NULL, port_no.c_str(), &hints, &res) };
-    if (status == -1) {
-        // TODO: Throw exception using gai_strerror()
+    struct addrinfo *res { getaddrinfo_res(m_ip_type, port_no) };
+    if (res == nullptr) {
+        // TODO: Throw exception
     }
 
-    // Now traverse the linked list and bind to a node
-
+    // Traverse the list and bind
     for (struct addrinfo *p = res; p != NULL; p = p->ai_next) {
-        // FIX: This bind call invokes the class method instead of bind syscall
         if (bind(m_sockfd, p->ai_addr, p->ai_addrlen) == -1) {
             continue;
         }
@@ -102,7 +96,7 @@ static inline int get_sock_type(const Sock_type &sock_type)
 
 
 // Convert Ip_type to its POSIX equivalent
-// IPV4 -> AF_INET; IPV6 -> AF_INET6; IP_ANY -> AF_UNSPEC
+// IPV4 -> AF_INET; IPV6 -> AF_INET6;
 static inline int get_addr_family(const Ip_type &ip_type)
 {
     assert(ip_type == Ip_type::IPV4 
@@ -110,4 +104,29 @@ static inline int get_addr_family(const Ip_type &ip_type)
 
     return ip_type == Ip_type::IPV4 ? AF_INET
         : AF_INET6;
+}
+
+
+// Return the res linked list which consits of
+// all the information reqd to bind a socket.
+//
+// TODO: Make this function more generic
+static struct addrinfo *getaddrinfo_res(const Ip_type &ip_type,
+                                        const std::string &port_no)
+{
+    struct addrinfo hints {};
+    std::memset(&hints, 0, sizeof(hints));
+
+    hints.ai_family = get_addr_family(ip_type);
+    hints.ai_flags  = AI_PASSIVE;
+
+    // SEE: Why not use smart pointer here to return res list
+    struct addrinfo *res {};
+    int status { getaddrinfo(NULL, port_no.c_str(), &hints, &res) };
+    if (status == -1) {
+        // TODO: Throw exception using gai_strerror()
+        return nullptr;
+    }
+
+    return res;
 }
