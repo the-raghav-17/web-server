@@ -25,7 +25,7 @@ enum class Sock_type
 
 enum class Ip_type
 {
-    IPV4, IPV6, IP_ANY,
+    IPV4, IPV6,
 };
 
 // TODO: Define exceptions for socket
@@ -43,12 +43,13 @@ public:
     Socket(const Sock_type &sock_type, const Ip_type &ip_type);
     ~Socket();
 
-    void bind();
+    // TODO: add a close method for manually closing socket
+    void bind(const std::string &port_no);
     void listen(size_t queue_size);
 
 private:
     // Necessary socket details
-    int         m_sockfd    {};
+    int         m_sockfd    { -1 };  // -1 suggests no socket is created
     Sock_type   m_sock_type {};
     Ip_type     m_ip_type   {};
 };
