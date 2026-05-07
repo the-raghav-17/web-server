@@ -58,17 +58,23 @@ Socket::~Socket()
 }
 
 
-// For manually closing the socket
+// For manually closing the socket.
+// Trying to use the socket object after
+// closing the socket fd throws exceptions
 void Socket::close_socket()
 {
     if (m_sockfd > 0) {
         close(m_sockfd);
+        m_sockfd = -1;
     }
 }
 
 
 void Socket::bind_to_port(const std::string &port_no)
 {
+    if (m_sockfd == -1) {
+        // TODO: Throw exception that there is no valid socket
+    }
     // res is a linked list which consists of all the
     // info required to bind a socket.
 
