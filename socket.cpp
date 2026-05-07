@@ -58,6 +58,15 @@ Socket::~Socket()
 }
 
 
+// For manually closing the socket
+void Socket::close_socket()
+{
+    if (m_sockfd > 0) {
+        close(m_sockfd);
+    }
+}
+
+
 void Socket::bind_to_port(const std::string &port_no)
 {
     // res is a linked list which consists of all the
