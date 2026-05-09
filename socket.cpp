@@ -24,9 +24,9 @@
 
 // Local helper functions
 // SEE: These functions are local to file, why not make them friend?
-static inline int get_sock_type(const Sock_type &sock_type);
-static inline int get_addr_family(const Ip_type &ip_type);
-static struct addrinfo *getaddrinfo_res(const Ip_type &ip_type, 
+static inline int         get_sock_type(const Sock_type &sock_type);
+static inline int         get_addr_family(const Ip_type &ip_type);
+static struct addrinfo    *getaddrinfo_res(const Ip_type &ip_type, 
                                         const std::string &port_no);
 
 
@@ -78,6 +78,7 @@ void Socket::bind_to_port(const std::string &port_no)
     // res is a linked list which consists of all the
     // info required to bind a socket.
 
+    // FIX: See if m_sockfd is invalid, does this react appropriatly
     struct addrinfo *res { getaddrinfo_res(m_ip_type, port_no) };
     if (res == nullptr) {
         // TODO: Throw exception
@@ -86,7 +87,7 @@ void Socket::bind_to_port(const std::string &port_no)
     // Traverse the list and bind
     for (struct addrinfo *p = res; p != NULL; p = p->ai_next) {
         if (bind(m_sockfd, p->ai_addr, p->ai_addrlen) == -1) {
-            continue;
+            // TODO: Throw exception
         }
         break;
     }
@@ -95,6 +96,14 @@ void Socket::bind_to_port(const std::string &port_no)
     // TODO: Throw exception if we couldn't bind to any address
 
     // socket binded successfully
+}
+
+
+void Socket::listen_for_conn(const std::size_t &queue_size)
+{
+    if (listen(m_sockfd, queue_size) == -1) {
+        // TODO: Throw listen exception
+    }
 }
 
 
