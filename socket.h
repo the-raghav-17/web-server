@@ -41,21 +41,22 @@ class Socket
 {
 public:
     Socket(const Sock_type &sock_type, const Ip_type &ip_type);
+    // TODO: Add new constructor: Socket(sockfd, sock_type, ip_type, ip_string);
     ~Socket();
 
-    void close_socket();
-
-    // TODO: add a close method for manually closing socket
     void bind_to_port(const std::string &port_no);
     void listen_for_conn(std::size_t queue_size);
+    Socket accept_remote_conn();
 
     void close_socket();  // manually closing the socket
 
 private:
     // Necessary socket details
+    // FIX: m_sockfd being an int may not be portable for future
     int         m_sockfd    { -1 };  // -1 suggests no socket is created
     Sock_type   m_sock_type {};
     Ip_type     m_ip_type   {};
+    // TODO: Add ip_string as another member
 };
 
 

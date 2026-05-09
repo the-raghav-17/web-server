@@ -26,6 +26,8 @@
 // SEE: These functions are local to file, why not make them friend?
 static inline int         get_sock_type(const Sock_type &sock_type);
 static inline int         get_addr_family(const Ip_type &ip_type);
+static inline Ip_type     get_addr_family(const int &sa_family_t);
+static std::string        get_ip_string(const sockaddr &addr);
 static struct addrinfo    *getaddrinfo_res(const Ip_type &ip_type, 
                                         const std::string &port_no);
 
@@ -72,9 +74,6 @@ void Socket::close_socket()
 
 void Socket::bind_to_port(const std::string &port_no)
 {
-    if (m_sockfd == -1) {
-        // TODO: Throw exception that there is no valid socket
-    }
     // res is a linked list which consists of all the
     // info required to bind a socket.
 
@@ -107,6 +106,28 @@ void Socket::listen_for_conn(const std::size_t &queue_size)
 }
 
 
+Socket Socket::accept_remote_conn()
+{
+    struct sockaddr addr    {};
+    socklen_t       addrlen {};
+
+    int remote_sockfd {};
+    if ((remote_sockfd = accept(m_sockfd, &addr, &addrlen)) == -1) {
+        // TODO: Throw exception
+    }
+    
+    // Connecting to remote means that sock_type must be TCP
+    const Sock_type sock_type   { TCP };
+    const Ip_type   ip_type     { get_addr_family(addr.sa_family) };
+    const std::string ip_string { get_ip_string(addr) };
+
+    Socket remote_socket{ remote_sockfd, sock_type, ip_type, ip_string };
+    // TODO: Maybe add an exception??
+
+    return remote_socket;
+}
+
+
 // Convert Sock_type to its POSIX equivalent
 // TCP -> SOCK_STREAM; UDP -> SOCK_DGRAM
 static inline int get_sock_type(const Sock_type &sock_type)
@@ -128,6 +149,33 @@ static inline int get_addr_family(const Ip_type &ip_type)
 
     return ip_type == Ip_type::IPV4 ? AF_INET
         : AF_INET6;
+}
+
+
+// Overloaded variant of the above; does complete opposite
+static inline Ip_type get_addr_family(const int &sa_family_t)
+{
+    assert(sa_family_t == AF_INET
+        || sa_family_t == AF_INET6);
+
+    return sa_family_t == AF_INET ? IPV4
+        :  IPV6;
+}
+
+
+static std::string get_ip_string(const sockaddr &addr)
+{
+    char addr_str[INET6_ADDRSTRLEN];
+    sa_family_t sa_family { addr.sa_family };
+
+    // This extracts the address part from sockaddr
+    void *src = sa_family == AF_INET 
+        ? &((struct sockaddr_in *)&addr)->sin_addr)
+        : &((struct sockaddr_in6 *)&addr)->sin6_addr);
+
+    inet_ntop(sa_family, src, addr_str, sizeof(addr_str));
+    std::string ip_string { addr_str };
+    return ip_string;
 }
 
 
