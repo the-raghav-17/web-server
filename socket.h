@@ -48,6 +48,7 @@ public:
     // TODO: add a close method for manually closing socket
     void bind_to_port(const std::string &port_no);
     void listen(size_t queue_size);
+    void close_socket();  // manually closing the socket
 
 private:
     // Necessary socket details
