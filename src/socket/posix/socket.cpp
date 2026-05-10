@@ -117,9 +117,9 @@ Socket Socket::accept_remote_conn()
     }
     
     // Connecting to remote means that sock_type must be TCP
-    const Sock_type sock_type   { TCP };
-    const Ip_type   ip_type     { get_addr_family(addr.sa_family) };
-    const std::string ip_string { get_ip_string(addr) };
+    const Sock_type   sock_type   { TCP };
+    const Ip_type     ip_type     { get_addr_family(addr.sa_family) };
+    const std::string ip_string   { get_ip_string(addr) };
 
     Socket remote_socket{ remote_sockfd, sock_type, ip_type, ip_string };
     // TODO: Maybe add an exception??
