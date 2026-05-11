@@ -40,23 +40,36 @@ enum class Ip_type
 class Socket
 {
 public:
+    // Call this if you want to create a socket from scratch
     Socket(const Sock_type &sock_type, const Ip_type &ip_type);
-    // TODO: Add new constructor: Socket(sockfd, sock_type, ip_type, ip_string);
+
+    // Call this if you already have an fd assigned to socket
+    // and want to create an object out of it
+    Socket(const int &sockfd, const Sock_type &sock_type, 
+            const Ip_type &ip_type, const std::string &ip_string):
+        m_sockfd    { sockfd },
+        m_sock_type { sock_type },
+        m_ip_type   { ip_type },
+        m_ip_string { ip_string }
+    {
+    }
+
     ~Socket();
 
+    // Server methods
     void bind_to_port(const std::string &port_no);
-    void listen_for_conn(std::size_t queue_size);
-    Socket accept_remote_conn();
+    // TCP server
+    void listen_for_conn(std::size_t queue_size) const;
+    Socket accept_remote_conn() const;
 
     void close_socket();  // manually closing the socket
 
 private:
-    // Necessary socket details
-    // FIX: m_sockfd being an int may not be portable for future
     int         m_sockfd    { -1 };  // -1 suggests no socket is created
     Sock_type   m_sock_type {};
     Ip_type     m_ip_type   {};
-    // TODO: Add ip_string as another member
+    std::string m_ip_string {};
+    std::string m_port_no   {};
 };
 
 
