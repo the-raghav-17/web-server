@@ -46,11 +46,10 @@ public:
     // Call this if you already have an fd assigned to socket
     // and want to create an object out of it
     Socket(const int &sockfd, const Sock_type &sock_type, 
-            const Ip_type &ip_type, const std::string &ip_string):
+            const Ip_type &ip_type):
         m_sockfd    { sockfd },
         m_sock_type { sock_type },
         m_ip_type   { ip_type },
-        m_ip_string { ip_string }
     {
     }
 
@@ -65,11 +64,9 @@ public:
     void close_socket();  // manually closing the socket
 
 private:
-    int         m_sockfd    { -1 };  // -1 suggests no socket is created
-    Sock_type   m_sock_type {};
-    Ip_type     m_ip_type   {};
-    std::string m_ip_string {};
-    std::string m_port_no   {};
+    int         m_sockfd         { -1 };  // -1 suggests no socket is created
+    Sock_type   m_sock_type      {};
+    Ip_type     m_ip_type        {};
 };
 
 

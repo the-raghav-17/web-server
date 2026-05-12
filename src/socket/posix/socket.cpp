@@ -68,7 +68,6 @@ void Socket::bind_to_port(const std::string &port_no)
     // res is a linked list which consists of all the
     // info required to bind a socket.
 
-    // FIX: See if m_sockfd is invalid, does this react appropriatly
     struct addrinfo *res { Sock_helper::getaddrinfo_res(m_ip_type, port_no) };
     if (res == nullptr) {
         // TODO: Throw exception
@@ -83,7 +82,9 @@ void Socket::bind_to_port(const std::string &port_no)
     }
 
     freeaddrinfo(res);
-    // TODO: Throw exception if we couldn't bind to any address
+    if (p == NULL) {
+        // TODO: Throw exception
+    }
 
     // socket binded successfully
 }
@@ -108,11 +109,10 @@ Socket Socket::accept_remote_conn()
     }
     
     // Connecting to remote means that sock_type must be TCP
-    const Sock_type   sock_type   { TCP };
-    const Ip_type     ip_type     { Sock_helper::get_addr_family(addr.sa_family) };
-    const std::string ip_string   { Sock_helper::get_ip_string(addr) };
+    const Sock_type   sock_type { TCP };
+    const Ip_type     ip_type   { Sock_helper::get_addr_family(addr.sa_family) };
 
-    Socket remote_socket{ remote_sockfd, sock_type, ip_type, ip_string };
+    Socket remote_socket{ remote_sockfd, sock_type, ip_type };
     // TODO: Maybe add an exception??
 
     return remote_socket;

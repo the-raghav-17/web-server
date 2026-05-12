@@ -60,8 +60,8 @@ inline Ip_type Sock_helper::get_addr_family(const int &sa_family_t)
 
 std::string Sock_helper::get_ip_string(const sockaddr &addr)
 {
-    char addr_str[INET6_ADDRSTRLEN];
-    sa_family_t sa_family { addr.sa_family };
+    char addr_str[INET6_ADDRSTRLEN];  // buffer to store string
+    sa_family_t sa_family { addr.sa_family };  // address family
 
     // This extracts the address part from sockaddr
     void *src = sa_family == AF_INET 
