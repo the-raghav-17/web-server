@@ -28,6 +28,12 @@ enum class Ip_type
     IPV4, IPV6,
 };
 
+struct Ip_info
+{
+    Ip_type     ip_type;
+    std::string ip_string;
+};
+
 // TODO: Define exceptions for socket
 
 
@@ -61,12 +67,12 @@ public:
     void listen_for_conn(const std::size_t &queue_size) const;
 
     // FIX: accept_remote_conn() should also return ip_address and related information
-    Socket accept_remote_conn() const;
+    std::pair<Socket, Ip_info> accept_remote_conn() const;
 
     // Client methods
     // TODO: Add const to connect_to_remote
     // FIX: connect_to_remote() should also return ip_address and related information
-    void connect_to_remote(const std::string &node, const std::string &port_no);
+    Ip_info connect_to_remote(const std::string &node, const std::string &port_no);
 
     // Common methods
     // TODO: Add send() and recv()
@@ -76,8 +82,8 @@ public:
 
 private:
     int       m_sockfd    { -1 };  // -1 suggests no socket is created
-    Sock_type m_sock_type {};
-    Ip_type   m_ip_type   {};
+    Sock_type m_sock_type {};      // TCP or UDP: Connection type socket supports
+    Ip_type   m_ip_type   {};     // IPV4 or IPV6: Network type socket supports
 };
 
 

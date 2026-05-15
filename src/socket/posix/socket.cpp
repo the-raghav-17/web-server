@@ -99,7 +99,7 @@ void Socket::listen_for_conn(const std::size_t &queue_size) const
 }
 
 
-Socket Socket::accept_remote_conn() const
+std::pair<Socket, Ip_info> Socket::accept_remote_conn() const
 {
     struct sockaddr addr    {};
     socklen_t       addrlen {};
@@ -110,13 +110,15 @@ Socket Socket::accept_remote_conn() const
     }
     
     // Connecting to remote means that sock_type must be TCP
-    const Sock_type sock_type { Sock_type::TCP };
-    const Ip_type   ip_type   { Sock_helper::get_addr_family(addr.sa_family) };
+    const Sock_type   sock_type { Sock_type::TCP };
+    const Ip_type     ip_type   { Sock_helper::get_addr_family(addr.sa_family) };
+    const std::string ip_string { Sock_helper::get_ip_string(addr) };
 
     Socket remote_socket{ remote_sockfd, sock_type, ip_type };
     // TODO: Maybe add an exception??
+    Ip_info ip_info{ ip_type, ip_string };
 
-    return remote_socket;
+    return { remote_socket, ip_info };
 }
 
 
@@ -129,6 +131,7 @@ void Socket::connect_to_remote(const std::string &node, const std::string &port_
             // TODO: Store error message in string to throw later if error occurs
             continue;
         }
+        // FIX: Check if we can instantly return a value instead of first breaking out???
         break;
     }
     freeaddrinfo(res);
