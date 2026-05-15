@@ -49,7 +49,7 @@ public:
             const Ip_type &ip_type):
         m_sockfd    { sockfd },
         m_sock_type { sock_type },
-        m_ip_type   { ip_type },
+        m_ip_type   { ip_type }
     {
     }
 
@@ -58,7 +58,7 @@ public:
     // Server methods
     void bind_to_port(const std::string &port_no);
     // TCP server
-    void listen_for_conn(std::size_t queue_size) const;
+    void listen_for_conn(const std::size_t &queue_size) const;
 
     // FIX: accept_remote_conn() should also return ip_address and related information
     Socket accept_remote_conn() const;
@@ -66,7 +66,7 @@ public:
     // Client methods
     // TODO: Add const to connect_to_remote
     // FIX: connect_to_remote() should also return ip_address and related information
-    void connect_to_remote(std::string node, std::string port_no);
+    void connect_to_remote(const std::string &node, const std::string &port_no);
 
     // Common methods
     // TODO: Add send() and recv()

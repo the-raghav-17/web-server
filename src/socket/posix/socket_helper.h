@@ -19,16 +19,24 @@
 #include "socket.h"
 
 #include <string>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 
 
 namespace Sock_helper
 {
-    inline int      get_sock_type(const Sock_type &sock_type);
-    inline int      get_addr_family(const Ip_type &ip_type);
-    inline Ip_type  get_addr_family(const int &sa_family_t);
-    std::string     get_ip_string(const sockaddr &addr);
-    struct addrinfo *getaddrinfo_res(const Ip_type &ip_type, 
-                                    const std::string &port_no);
+    int              get_sock_type(const Sock_type &sock_type);
+    int              get_addr_family(const Ip_type &ip_type);
+    Ip_type          get_addr_family(const int &sa_family_t);
+    std::string      get_ip_string(const struct sockaddr &addr);
+
+    struct addrinfo *getaddrinfo_res(const std::string &port_no,
+                        const Ip_type &ip_type);
+
+    struct addrinfo *getaddrinfo_res(const std::string &port_no,
+                        const Ip_type &ip_type, const std::string &node,
+                        const Sock_type &sock_type = Sock_type::TCP);
 };
 
 

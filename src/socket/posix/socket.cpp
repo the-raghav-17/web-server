@@ -68,13 +68,14 @@ void Socket::bind_to_port(const std::string &port_no)
     // res is a linked list which consists of all the
     // info required to bind a socket.
 
-    struct addrinfo *res { Sock_helper::getaddrinfo_res(m_ip_type, port_no) };
+    struct addrinfo *res { Sock_helper::getaddrinfo_res(port_no, m_ip_type) };
     if (res == nullptr) {
         // TODO: Throw exception
     }
 
     // Traverse the list and bind
-    for (struct addrinfo *p = res; p != NULL; p = p->ai_next) {
+    struct addrinfo *p {};
+    for (p = res; p != NULL; p = p->ai_next) {
         if (bind(m_sockfd, p->ai_addr, p->ai_addrlen) == -1) {
             // TODO: Throw exception
         }
@@ -90,7 +91,7 @@ void Socket::bind_to_port(const std::string &port_no)
 }
 
 
-void Socket::listen_for_conn(const std::size_t &queue_size)
+void Socket::listen_for_conn(const std::size_t &queue_size) const
 {
     if (listen(m_sockfd, queue_size) == -1) {
         // TODO: Throw listen exception
@@ -98,7 +99,7 @@ void Socket::listen_for_conn(const std::size_t &queue_size)
 }
 
 
-Socket Socket::accept_remote_conn()
+Socket Socket::accept_remote_conn() const
 {
     struct sockaddr addr    {};
     socklen_t       addrlen {};
@@ -109,7 +110,7 @@ Socket Socket::accept_remote_conn()
     }
     
     // Connecting to remote means that sock_type must be TCP
-    const Sock_type sock_type { TCP };
+    const Sock_type sock_type { Sock_type::TCP };
     const Ip_type   ip_type   { Sock_helper::get_addr_family(addr.sa_family) };
 
     Socket remote_socket{ remote_sockfd, sock_type, ip_type };
@@ -119,19 +120,9 @@ Socket Socket::accept_remote_conn()
 }
 
 
-void Socket::connect_to_remote(std::string node, std::string port_no)
+void Socket::connect_to_remote(const std::string &node, const std::string &port_no)
 {
-    struct addrinfo hints {};
-    std::memset(&hints, 0, sizeof(hints));
-
-    hints.ai_family   = Sock_helper::get_addr_family(m_ip_type);
-    hints.ai_socktype = Sock_helper::get_sock_type(m_sock_type);
-
-    struct addrinfo *res {};
-    if (getaddrinfo(node.c_str(), port_no.c_str(), &hints, &res) == -1) {
-        // TODO: Throw exception
-    }
-
+    struct addrinfo *res { Sock_helper::getaddrinfo_res(port_no, m_ip_type, node) };
     struct addrinfo *p;
     for (p = res; p != NULL; p = p->ai_next) {
         if (connect(m_sockfd, p->ai_addr, p->ai_addrlen) == -1) {
