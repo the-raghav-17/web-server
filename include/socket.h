@@ -59,14 +59,25 @@ public:
     void bind_to_port(const std::string &port_no);
     // TCP server
     void listen_for_conn(std::size_t queue_size) const;
+
+    // FIX: accept_remote_conn() should also return ip_address and related information
     Socket accept_remote_conn() const;
+
+    // Client methods
+    // TODO: Add const to connect_to_remote
+    // FIX: connect_to_remote() should also return ip_address and related information
+    void connect_to_remote(std::string node, std::string port_no);
+
+    // Common methods
+    // TODO: Add send() and recv()
+    // TODO: Add sendto() and recvfrom() (UDP methods)
 
     void close_socket();  // manually closing the socket
 
 private:
-    int         m_sockfd         { -1 };  // -1 suggests no socket is created
-    Sock_type   m_sock_type      {};
-    Ip_type     m_ip_type        {};
+    int       m_sockfd    { -1 };  // -1 suggests no socket is created
+    Sock_type m_sock_type {};
+    Ip_type   m_ip_type   {};
 };
 
 

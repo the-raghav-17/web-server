@@ -109,11 +109,41 @@ Socket Socket::accept_remote_conn()
     }
     
     // Connecting to remote means that sock_type must be TCP
-    const Sock_type   sock_type { TCP };
-    const Ip_type     ip_type   { Sock_helper::get_addr_family(addr.sa_family) };
+    const Sock_type sock_type { TCP };
+    const Ip_type   ip_type   { Sock_helper::get_addr_family(addr.sa_family) };
 
     Socket remote_socket{ remote_sockfd, sock_type, ip_type };
     // TODO: Maybe add an exception??
 
     return remote_socket;
+}
+
+
+void Socket::connect_to_remote(std::string node, std::string port_no)
+{
+    struct addrinfo hints {};
+    std::memset(&hints, 0, sizeof(hints));
+
+    hints.ai_family   = Sock_helper::get_addr_family(m_ip_type);
+    hints.ai_socktype = Sock_helper::get_sock_type(m_sock_type);
+
+    struct addrinfo *res {};
+    if (getaddrinfo(node.c_str(), port_no.c_str(), &hints, &res) == -1) {
+        // TODO: Throw exception
+    }
+
+    struct addrinfo *p;
+    for (p = res; p != NULL; p = p->ai_next) {
+        if (connect(m_sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+            // TODO: Store error message in string to throw later if error occurs
+            continue;
+        }
+        break;
+    }
+    freeaddrinfo(res);
+    if (p == NULL) {
+        // TODO: Throw exception with error message being retrieved from above
+    }
+
+    // Connected successfully to remote
 }
