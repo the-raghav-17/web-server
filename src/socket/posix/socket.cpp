@@ -41,6 +41,30 @@ Socket::Socket(const Sock_type sock_type, const Ip_type ip_type)
 }
 
 
+// Encapsulate socket fd into an object.
+// Supported socket types are Stream socket and Datagram socket
+// Address family of socket fd must be either IPv4 or IPv6
+Socket::Socket(const int sockfd)
+{
+    // Firstly get ip family and socket type
+
+    int ip_type{ Sock_helper::get_ip_type(sockfd) };
+    if (ip_type != AF_INET && ip_type != AF_INET6) {
+        // TODO: Throw exception
+    }
+
+    int sock_type{ Sock_helper::get_sock_type(sockfd) };
+    if (sock_type != SOCK_STREAM && sock_type != SOCK_DGRM) {
+        // TODO: Throw exception
+    }
+
+    // If ip family and socket type are valid, construct object
+    m_sock_type = sock_type;
+    m_ip_type   = ip_type;
+    m_sockfd    = sockfd;
+}
+
+
 Socket::~Socket()
 {
     // Close the open socket fd
