@@ -37,47 +37,33 @@ struct Ip_info
 // TODO: Define exceptions for socket
 
 
-// SEE: How can we make socket class more generic
-// by defining an interface and creating different implementation
-// based on operating system and/or if its client or server application
-// that want to create the socket
-
-// TODO: Complete implementation of socket class
 class Socket
 {
 public:
     // Create socket from scratch
     Socket(const Sock_type sock_type, const Ip_type ip_type);
 
-    // Call this if you already have an fd assigned to socket
-    // and want to create an object out of it
-    Socket(const int &sockfd, const Sock_type &sock_type, 
-            const Ip_type &ip_type):
-        m_sockfd    { sockfd },
-        m_sock_type { sock_type },
-        m_ip_type   { ip_type }
-    {
-    }
+    // Create socket object out of socket fd
+    Socket(const int sockfd);
 
     ~Socket();
 
-    // Server methods
-    void bind_to_port(const std::string &port_no);
-    // TCP server
-    void listen_for_conn(const std::size_t &queue_size) const;
 
-    // FIX: accept_remote_conn() should also return ip_address and related information
+    // ========== Server methods ========== //
+    void bind_to_port(const std::string &port_no);
+    void listen_for_conn(const std::size_t &queue_size) const;
     std::pair<Socket, Ip_info> accept_remote_conn() const;
 
-    // Client methods
-    // TODO: Add const to connect_to_remote
-    // FIX: connect_to_remote() should also return ip_address and related information
-    Ip_info connect_to_remote(const std::string &node, const std::string &port_no);
 
-    // Common methods
+    // ========== Client methods ========== //
+    Ip_info connect_to_remote(const std::string &node, 
+                              const std::string &port_no) const;
+
+    // ========== Common methods ========== //
     // TODO: Add send() and recv()
     // TODO: Add sendto() and recvfrom() (UDP methods)
 
+    int  get_sockfd() const { return m_sockfd; }
     void close_socket();  // manually closing the socket
 
 private:
