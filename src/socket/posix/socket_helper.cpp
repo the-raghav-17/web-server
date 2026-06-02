@@ -36,6 +36,20 @@ int Sock_helper::get_sock_type(const Sock_type &sock_type)
 }
 
 
+int Sock_helper::get_sock_type(const int sockfd)
+{
+    int level = SOL_SOCKET;
+    int optval[1]{};
+    socklen_t optlen{ 4 };
+
+    if (getsockopt(sockfd, level, SO_TYPE, optval, &optlen) == -1) {
+        return -1;
+    }
+
+    return *optval;
+}
+
+
 // Convert Ip_type to its POSIX equivalent
 // IPV4 -> AF_INET; IPV6 -> AF_INET6;
 int Sock_helper::get_addr_family(const Ip_type &ip_type)
@@ -56,6 +70,20 @@ Ip_type Sock_helper::get_addr_family(const int &sa_family_t)
 
     return sa_family_t == AF_INET ? Ip_type::IPV4
         :  Ip_type::IPV6;
+}
+
+
+int get_addr_family(const int sockfd)
+{
+    int level = SOL_SOCKET;
+    int optval[1]{};
+    socklen_t optlen{ 4 };
+
+    if (getsockopt(sockfd, level, SO_DOMAIN, optval, &optlen) == -1) {
+        return -1;
+    }
+
+    return *optval;
 }
 
 

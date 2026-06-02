@@ -27,8 +27,12 @@
 namespace Sock_helper
 {
     int              get_sock_type(const Sock_type &sock_type);
+    int              get_sock_type(const int sockfd);   // socket type of socket
+
     int              get_addr_family(const Ip_type &ip_type);
     Ip_type          get_addr_family(const int &sa_family_t);
+    int              get_addr_family(const int sockfd);  // Address family of socket
+
     std::string      get_ip_string(const struct sockaddr &addr);
 
     struct addrinfo *getaddrinfo_res(const std::string &port_no,
