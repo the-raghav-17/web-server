@@ -46,8 +46,8 @@ struct Ip_info
 class Socket
 {
 public:
-    // Call this if you want to create a socket from scratch
-    Socket(const Sock_type &sock_type, const Ip_type &ip_type);
+    // Create socket from scratch
+    Socket(const Sock_type sock_type, const Ip_type ip_type);
 
     // Call this if you already have an fd assigned to socket
     // and want to create an object out of it

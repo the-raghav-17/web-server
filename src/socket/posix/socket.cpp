@@ -23,15 +23,14 @@
 #include <unistd.h>   // close
 
 
-// Socket constructor is supposed to create a generic socket which
-// can be used for both listening and connecting to remote
-Socket::Socket(const Sock_type &sock_type, const Ip_type &ip_type)
+// Construct a generic socket
+Socket::Socket(const Sock_type sock_type, const Ip_type ip_type)
     : m_sock_type { sock_type },
       m_ip_type   { ip_type }
 {
-    const int socktype    { Sock_helper::get_sock_type(sock_type) };
-    const int addr_family { Sock_helper::get_addr_family(ip_type) };
-    const int protocol    { 0 };
+    const auto socktype    { Sock_helper::get_sock_type(sock_type) };
+    const auto addr_family { Sock_helper::get_addr_family(ip_type) };
+    const auto protocol    { 0 };
 
     if ((m_sockfd = socket(addr_family, socktype, protocol)) == -1) {
         // TODO: Throw exception
