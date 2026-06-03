@@ -21,6 +21,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <memory>
 #include <arpa/inet.h>
 
 
@@ -111,8 +112,8 @@ std::string Sock_helper::get_ip_string(const sockaddr &addr)
 // Return the res linked list which consits of
 // all the information reqd to bind a socket.
 // To be used when calling bind
-struct addrinfo *getaddrinfo_res(const std::string &port_no,
-                    const Ip_type &ip_type)
+Sock_helper::Addrinfo_list
+Sock_helper::getaddrinfo_res(const std::string& port_no, const Ip_type ip_type)
 {
     struct addrinfo hints {};
     std::memset(&hints, 0, sizeof(hints));
@@ -120,35 +121,36 @@ struct addrinfo *getaddrinfo_res(const std::string &port_no,
     hints.ai_family = Sock_helper::get_addr_family(ip_type);
     hints.ai_flags  = AI_PASSIVE;
 
-    struct addrinfo *res {};
+    struct addrinfo* res{};
     int status { getaddrinfo(NULL, port_no.c_str(), &hints, &res) };
     if (status == -1) {
         // TODO: Throw exception using gai_strerror()
     }
 
-    return res;
+    Addrinfo_list list{ res };
+    return list;
 }
 
 
 // Return the res linked list which consits of
 // all the information reqd to bind a socket.
 // To be used when calling connect()
-struct addrinfo *getaddrinfo_res(const std::string &port_no,
-                    const Ip_type &ip_type, const std::string &node,
-                    const Sock_type &sock_type = Sock_type::TCP)
+Sock_helper::Addrinfo_list
+Sock_helper::getaddrinfo_res(const std::string& port_no, const Ip_type ip_type,
+                             const std::string& node, Sock_type sock_type)
 {
-    struct addrinfo hints {};
+    struct addrinfo hints{};
     std::memset(&hints, 0, sizeof(hints));
 
     hints.ai_family   = Sock_helper::get_addr_family(ip_type);
     hints.ai_socktype = Sock_helper::get_sock_type(sock_type);
 
-    struct addrinfo *res {};
+    struct addrinfo* res{};
     int status { getaddrinfo(node.c_str(), port_no.c_str(), &hints, &res) };
     if (status == -1) {
         // TODO: Throw exception using gai_strerror()
     }
 
-    return res;
-    
+    Addrinfo_list list{ res };
+    return list;
 }
