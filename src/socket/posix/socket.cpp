@@ -92,26 +92,24 @@ void Socket::bind_to_port(const std::string &port_no)
     // res is a linked list which consists of all the
     // info required to bind a socket.
 
-    struct addrinfo *res { Sock_helper::getaddrinfo_res(port_no, m_ip_type) };
-    if (res == nullptr) {
-        // TODO: Throw exception
-    }
+    // SEE: How to add exception when getaddrino_list fails
+    auto res{ Sock_helper::getaddrinfo_list(port_no, m_ip_family) };
+
+    std::string err_msg {};
 
     // Traverse the list and bind
-    struct addrinfo *p {};
-    for (p = res; p != NULL; p = p->ai_next) {
+    for (auto p = res.get(); p != nullptr; p = p->ai_next) {
         if (bind(m_sockfd, p->ai_addr, p->ai_addrlen) == -1) {
-            // TODO: Throw exception
+            err_msg += strerror(errno);
+            err_msg += '\n';
+            continue;
         }
-        break;
+
+        // socket binded successfully
+        return;
     }
 
-    freeaddrinfo(res);
-    if (p == NULL) {
-        // TODO: Throw exception
-    }
-
-    // socket binded successfully
+    // TODO: Throw exception
 }
 
 
@@ -145,22 +143,23 @@ std::pair<Socket, Ip_info> Socket::accept_remote_conn() const
 }
 
 
-void Socket::connect_to_remote(const std::string &node, const std::string &port_no)
+Ip_info Socket::connect_to_remote(const std::string &node, const std::string &port_no) const
 {
-    struct addrinfo *res { Sock_helper::getaddrinfo_res(port_no, m_ip_type, node) };
-    struct addrinfo *p;
-    for (p = res; p != NULL; p = p->ai_next) {
+    auto res { Sock_helper::getaddrinfo_list(port_no, m_ip_family, node) };
+    std::string err_msg {};
+
+    for (auto p = res.get(); p != nullptr; p = p->ai_next) {
         if (connect(m_sockfd, p->ai_addr, p->ai_addrlen) == -1) {
-            // TODO: Store error message in string to throw later if error occurs
+            err_msg += strerror(errno);
+            err_msg += '\n';
             continue;
         }
-        // FIX: Check if we can instantly return a value instead of first breaking out???
-        break;
-    }
-    freeaddrinfo(res);
-    if (p == NULL) {
-        // TODO: Throw exception with error message being retrieved from above
-    }
+        // Connected successfully to remote
+        
+        Ip_family   ip_family{ Sock_helper::get_ip_family(*(p->ai_addr)) };
+        std::string ip_string{ Sock_helper::get_ip_string(*(p->ai_addr)) };
 
-    // Connected successfully to remote
+        return { ip_family, ip_string };
+    }
+    // TODO: Throw exception with error message being retrieved from above
 }
