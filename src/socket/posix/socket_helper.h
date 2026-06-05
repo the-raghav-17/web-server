@@ -37,19 +37,15 @@ namespace Sock_helper
 
     using Addrinfo_list = std::unique_ptr<struct addrinfo, List_deleter>;
     
-    // FIX: Overloaded get_sock_type
-    int              convert_sock_type(const Sock_type sock_type);
-    Sock_type        convert_sock_type(const int sock_type);
+    int         convert_sock_type(const Sock_type sock_type);
+    Sock_type   convert_sock_type(const int sock_type);
+    int         get_sock_type(const int sockfd);   // socket type of socket
 
-    int              get_sock_type(const int sockfd);   // socket type of socket
-
-    // FIX: Overloaded get_addr_family
-    int              convert_ip_family(const Ip_family ip_family);
-    Ip_family        convert_ip_family(const int sa_family_t);
-
-    int              get_ip_family(const int sockfd);  // Address family of socket
-
-    std::string      get_ip_string(const struct sockaddr& addr);
+    int         convert_ip_family(const Ip_family ip_family);
+    Ip_family   convert_ip_family(const int sa_family_t);
+    Ip_family   get_ip_family(const struct sockaddr& addr);
+    int         get_ip_family(const int sockfd);  // Address family of socket
+    std::string get_ip_string(const struct sockaddr& addr);
 
     Addrinfo_list
     getaddrinfo_list(const std::string& port_no, const Ip_family ip_family);

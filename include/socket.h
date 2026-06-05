@@ -69,7 +69,7 @@ public:
 private:
     int       m_sockfd    { -1 };  // -1 suggests no socket is created
     Sock_type m_sock_type {};      // TCP or UDP: Connection type socket supports
-    Ip_family   m_ip_family   {};     // IPV4 or IPV6: Network type socket supports
+    Ip_family m_ip_family   {};     // IPV4 or IPV6: Network type socket supports
 };
 
 

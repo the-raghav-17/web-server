@@ -83,6 +83,20 @@ Ip_family Sock_helper::convert_ip_family(const int sa_family_t)
 }
 
 
+Ip_family Sock_helper::get_ip_family(const struct sockaddr& addr)
+{
+    sa_family_t sa_family { addr.sa_family };  // address family
+
+    assert(sa_family == AF_INET || sa_family == AF_INET6);
+
+    if (sa_family == AF_INET) {
+        return Ip_family::IPV4;
+    } else if (sa_family == AF_INET6) {
+        return Ip_family::IPV6;
+    }
+}
+
+
 int Sock_helper::get_ip_family(const int sockfd)
 {
     int level = SOL_SOCKET;

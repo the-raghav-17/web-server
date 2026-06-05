@@ -21,15 +21,16 @@
 #include <cstring>    // memset
 #include <cassert>    // assert
 #include <unistd.h>   // close
+#include <cerrno>
 
 
 // Construct a generic socket
-Socket::Socket(const Sock_type sock_type, const Ip_type ip_type)
+Socket::Socket(const Sock_type sock_type, const Ip_family ip_family)
     : m_sock_type { sock_type },
-      m_ip_type   { ip_type }
+      m_ip_family   { ip_family }
 {
-    const auto socktype    { Sock_helper::get_sock_type(sock_type) };
-    const auto addr_family { Sock_helper::get_addr_family(ip_type) };
+    const auto socktype    { Sock_helper::convert_sock_type(sock_type) };
+    const auto addr_family { Sock_helper::convert_ip_family(ip_family) };
     const auto protocol    { 0 };
 
     if ((m_sockfd = socket(addr_family, socktype, protocol)) == -1) {
@@ -48,19 +49,19 @@ Socket::Socket(const int sockfd)
 {
     // Firstly get ip family and socket type
 
-    int ip_type{ Sock_helper::get_ip_type(sockfd) };
-    if (ip_type != AF_INET && ip_type != AF_INET6) {
+    int ip_family{ Sock_helper::get_ip_family(sockfd) };
+    if (ip_family != AF_INET && ip_family != AF_INET6) {
         // TODO: Throw exception
     }
 
     int sock_type{ Sock_helper::get_sock_type(sockfd) };
-    if (sock_type != SOCK_STREAM && sock_type != SOCK_DGRM) {
+    if (sock_type != SOCK_STREAM && sock_type != SOCK_DGRAM) {
         // TODO: Throw exception
     }
 
     // If ip family and socket type are valid, construct object
-    m_sock_type = sock_type;
-    m_ip_type   = ip_type;
+    m_sock_type = Sock_helper::convert_sock_type(sock_type);
+    m_ip_family   = Sock_helper::convert_ip_family(ip_family);
     m_sockfd    = sockfd;
 }
 
@@ -124,8 +125,8 @@ void Socket::listen_for_conn(const std::size_t &queue_size) const
 
 std::pair<Socket, Ip_info> Socket::accept_remote_conn() const
 {
-    struct sockaddr addr    {};
-    socklen_t       addrlen {};
+    struct sockaddr addr{};
+    socklen_t       addrlen{};
 
     int remote_sockfd {};
     if ((remote_sockfd = accept(m_sockfd, &addr, &addrlen)) == -1) {
@@ -133,13 +134,12 @@ std::pair<Socket, Ip_info> Socket::accept_remote_conn() const
     }
     
     // Connecting to remote means that sock_type must be TCP
-    const Sock_type   sock_type { Sock_type::TCP };
-    const Ip_type     ip_type   { Sock_helper::get_addr_family(addr.sa_family) };
+    const Ip_family   ip_family { Sock_helper::convert_ip_family(addr.sa_family) };
     const std::string ip_string { Sock_helper::get_ip_string(addr) };
 
-    Socket remote_socket{ remote_sockfd, sock_type, ip_type };
+    Socket remote_socket{ remote_sockfd };
     // TODO: Maybe add an exception??
-    Ip_info ip_info{ ip_type, ip_string };
+    Ip_info ip_info{ ip_family, ip_string };
 
     return { remote_socket, ip_info };
 }
