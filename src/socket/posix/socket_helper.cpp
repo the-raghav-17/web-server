@@ -25,15 +25,25 @@
 #include <arpa/inet.h>
 
 
-// Convert Sock_type to its POSIX equivalent
 // TCP -> SOCK_STREAM; UDP -> SOCK_DGRAM
-int Sock_helper::get_sock_type(const Sock_type &sock_type)
+int Sock_helper::convert_sock_type(const Sock_type sock_type)
 {
     assert(sock_type == Sock_type::TCP 
         || sock_type == Sock_type::UDP);
 
     return sock_type == Sock_type::TCP ? SOCK_STREAM
             : SOCK_DGRAM;
+}
+
+
+// Overloaded variant of the above; does complete opposite
+Sock_type convert_sock_type(const int sock_type)
+{
+    assert(sock_type == SOCK_STREAM
+        || sock_type == SOCK_DGRAM);
+
+    return sock_type == SOCK_STREAM ? Sock_type::TCP
+        : Sock_type::UDP;
 }
 
 
@@ -51,30 +61,29 @@ int Sock_helper::get_sock_type(const int sockfd)
 }
 
 
-// Convert Ip_type to its POSIX equivalent
 // IPV4 -> AF_INET; IPV6 -> AF_INET6;
-int Sock_helper::get_addr_family(const Ip_type &ip_type)
+int Sock_helper::convert_ip_family(const Ip_family ip_family)
 {
-    assert(ip_type == Ip_type::IPV4 
-        || ip_type == Ip_type::IPV6);
+    assert(ip_family == Ip_family::IPV4 
+        || ip_family == Ip_family::IPV6);
 
-    return ip_type == Ip_type::IPV4 ? AF_INET
+    return ip_family == Ip_family::IPV4 ? AF_INET
         : AF_INET6;
 }
 
 
 // Overloaded variant of the above; does complete opposite
-Ip_type Sock_helper::get_addr_family(const int &sa_family_t)
+Ip_family Sock_helper::convert_ip_family(const int sa_family_t)
 {
     assert(sa_family_t == AF_INET
         || sa_family_t == AF_INET6);
 
-    return sa_family_t == AF_INET ? Ip_type::IPV4
-        :  Ip_type::IPV6;
+    return sa_family_t == AF_INET ? Ip_family::IPV4
+        :  Ip_family::IPV6;
 }
 
 
-int get_addr_family(const int sockfd)
+int Sock_helper::get_ip_family(const int sockfd)
 {
     int level = SOL_SOCKET;
     int optval[1]{};
@@ -113,12 +122,12 @@ std::string Sock_helper::get_ip_string(const sockaddr &addr)
 // all the information reqd to bind a socket.
 // To be used when calling bind
 Sock_helper::Addrinfo_list
-Sock_helper::getaddrinfo_res(const std::string& port_no, const Ip_type ip_type)
+Sock_helper::getaddrinfo_list(const std::string& port_no, const Ip_family ip_family)
 {
-    struct addrinfo hints {};
+    struct addrinfo hints{};
     std::memset(&hints, 0, sizeof(hints));
 
-    hints.ai_family = Sock_helper::get_addr_family(ip_type);
+    hints.ai_family = Sock_helper::convert_ip_family(ip_family);
     hints.ai_flags  = AI_PASSIVE;
 
     struct addrinfo* res{};
@@ -136,14 +145,14 @@ Sock_helper::getaddrinfo_res(const std::string& port_no, const Ip_type ip_type)
 // all the information reqd to bind a socket.
 // To be used when calling connect()
 Sock_helper::Addrinfo_list
-Sock_helper::getaddrinfo_res(const std::string& port_no, const Ip_type ip_type,
+Sock_helper::getaddrinfo_list(const std::string& port_no, const Ip_family ip_family,
                              const std::string& node, Sock_type sock_type)
 {
     struct addrinfo hints{};
     std::memset(&hints, 0, sizeof(hints));
 
-    hints.ai_family   = Sock_helper::get_addr_family(ip_type);
-    hints.ai_socktype = Sock_helper::get_sock_type(sock_type);
+    hints.ai_family   = Sock_helper::convert_ip_family(ip_family);
+    hints.ai_socktype = Sock_helper::convert_sock_type(sock_type);
 
     struct addrinfo* res{};
     int status { getaddrinfo(node.c_str(), port_no.c_str(), &hints, &res) };
