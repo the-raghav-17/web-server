@@ -75,6 +75,27 @@ Socket::~Socket()
 }
 
 
+Socket::Socket(Socket&& other):
+    m_sockfd{ other.m_sockfd }
+{
+    other.m_sockfd = -1;
+}
+
+
+Socket& Socket::operator=(Socket&& other)
+{
+    if (this == &other) {
+        return *this;
+    }
+
+    close(m_sockfd);
+    m_sockfd = other.m_sockfd;
+    other.m_sockfd = -1;
+
+    return *this;
+}
+
+
 // For manually closing the socket.
 // Trying to use the socket object after
 // closing the socket fd throws exceptions
@@ -139,7 +160,8 @@ std::pair<Socket, Ip_info> Socket::accept_remote_conn() const
     // TODO: Maybe add an exception??
     Ip_info ip_info{ ip_family, ip_string };
 
-    return { remote_socket, ip_info };
+    // FIX: Trying to return remote_socket and ip_info as pair leads to error; maybe move semantics is the culprit???
+    return std::pair<Socket, Ip_info>{ remote_socket, ip_info };
 }
 
 

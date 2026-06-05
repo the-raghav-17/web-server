@@ -48,6 +48,14 @@ public:
 
     ~Socket();
 
+    // Copying not allowed
+    Socket(const Socket&)            = delete;
+    Socket& operator=(const Socket&) = delete;
+
+    // Move allowed
+    Socket(Socket&& other);
+    Socket& operator=(Socket&& other);
+
 
     // ========== Server methods ========== //
     void bind_to_port(const std::string &port_no);
@@ -67,9 +75,9 @@ public:
     void close_socket();  // manually closing the socket
 
 private:
-    int       m_sockfd    { -1 };  // -1 suggests no socket is created
-    Sock_type m_sock_type {};      // TCP or UDP: Connection type socket supports
-    Ip_family m_ip_family   {};     // IPV4 or IPV6: Network type socket supports
+    int       m_sockfd    { -1 }; // -1 suggests no socket is created
+    Sock_type m_sock_type {};     // TCP or UDP: Connection type socket supports
+    Ip_family m_ip_family {};     // IPV4 or IPV6: Network type socket supports
 };
 
 
