@@ -68,7 +68,12 @@ public:
                               const std::string &port_no) const;
 
     // ========== Common methods ========== //
-    // TODO: Add send() and recv()
+    // TODO: Add flags for send()
+    int send(const Socket& remote_sock, const std::string& msg);
+    std::string recv(const Socket& remote_sock);
+
+    // TODO: Add recv()
+
     // TODO: Add sendto() and recvfrom() (UDP methods)
 
     int  get_sockfd() const { return m_sockfd; }

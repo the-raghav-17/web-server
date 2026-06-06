@@ -184,3 +184,35 @@ Ip_info Socket::connect_to_remote(const std::string &node, const std::string &po
     }
     // TODO: Throw exception with error message being retrieved from above
 }
+
+
+int send(const Socket& remote_sock, const std::string& msg)
+{
+    int remote_sockfd{ remote_sock.get_sockfd() };
+    auto buf{ msg.c_str() };
+    auto buf_size{ msg.size() };
+    int flags{ 0 };
+
+    int size{};
+
+    if ((size = send(remote_sockfd, buf, buf_size, flags)) == -1) {
+        // TODO: Throw exceptions
+    }
+
+    return size;
+}
+
+
+std::string recv(const Socket& remote_sock)
+{
+    int remote_sockfd{ remote_sock.get_sockfd() };
+    std::string buf{};
+    buf.resize(1024);   // randomly chosen
+    int flags{ 0 };
+
+    if (recv(remote_sockfd, buf.data(), buf.size(), flags) == -1) {
+        // TODO: Throw exception
+    }
+
+    return buf;
+}
