@@ -88,7 +88,7 @@ Socket& Socket::operator=(Socket&& other)
         return *this;
     }
 
-    close(m_sockfd);
+    this->close_socket();
     m_sockfd = other.m_sockfd;
     other.m_sockfd = -1;
 
