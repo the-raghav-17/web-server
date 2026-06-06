@@ -160,8 +160,7 @@ std::pair<Socket, Ip_info> Socket::accept_remote_conn() const
     // TODO: Maybe add an exception??
     Ip_info ip_info{ ip_family, ip_string };
 
-    // FIX: Trying to return remote_socket and ip_info as pair leads to error; maybe move semantics is the culprit???
-    return std::pair<Socket, Ip_info>{ remote_socket, ip_info };
+    return std::make_pair(std::move(remote_socket), ip_info);
 }
 
 
