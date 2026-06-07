@@ -155,7 +155,7 @@ void Socket::listen_for_conn(const std::size_t &queue_size) const
 std::pair<Socket, Ip_info> Socket::accept_remote_conn() const
 {
     struct sockaddr addr{};
-    socklen_t       addrlen{};
+    socklen_t       addrlen{ sizeof(addr) };
 
     int remote_sockfd {};
     if ((remote_sockfd = accept(m_sockfd, &addr, &addrlen)) == -1) {
