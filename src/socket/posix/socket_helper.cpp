@@ -37,7 +37,7 @@ int Sock_helper::convert_sock_type(const Sock_type sock_type)
 
 
 // Overloaded variant of the above; does complete opposite
-Sock_type convert_sock_type(const int sock_type)
+Sock_type Sock_helper::convert_sock_type(const int sock_type)
 {
     assert(sock_type == SOCK_STREAM
         || sock_type == SOCK_DGRAM);
