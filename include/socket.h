@@ -58,7 +58,7 @@ public:
 
 
     // ========== Server methods ========== //
-    void bind_to_port(const std::string &port_no);
+    void bind_to_port(const std::string& port_no);
     void listen_for_conn(const std::size_t &queue_size) const;
     std::pair<Socket, Ip_info> accept_remote_conn() const;
 
@@ -69,8 +69,8 @@ public:
 
     // ========== Common methods ========== //
     // TODO: Add flags for send()
-    int send(const Socket& remote_sock, const std::string& msg);
-    std::string recv(const Socket& remote_sock);
+    int send_msg(const Socket& remote_sock, const std::string& msg);
+    std::string recv_msg();
 
     // TODO: Add recv()
 

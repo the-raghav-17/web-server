@@ -198,7 +198,7 @@ Ip_info Socket::connect_to_remote(const std::string &node, const std::string &po
 }
 
 
-int send(const Socket& remote_sock, const std::string& msg)
+int Socket::send_msg(const Socket& remote_sock, const std::string& msg)
 {
     int remote_sockfd{ remote_sock.get_sockfd() };
     auto buf{ msg.c_str() };
@@ -216,14 +216,13 @@ int send(const Socket& remote_sock, const std::string& msg)
 }
 
 
-std::string recv(const Socket& remote_sock)
+std::string Socket::recv_msg()
 {
-    int remote_sockfd{ remote_sock.get_sockfd() };
     std::string buf{};
     buf.resize(1024);   // randomly chosen
     int flags{ 0 };
 
-    if (recv(remote_sockfd, buf.data(), buf.size(), flags) == -1) {
+    if (recv(m_sockfd, buf.data(), buf.size(), flags) == -1) {
         // TODO: Throw exception
         std::cout << "recv failed\n";
     }
