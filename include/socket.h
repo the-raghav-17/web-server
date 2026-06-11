@@ -47,11 +47,13 @@ public:
     Socket(Socket&& other);
     Socket& operator=(Socket&& other);
 
+    int  get_sockfd() const { return m_sockfd; }
+    void close_socket();
 
     // ========== Server methods ========== //
-    void bind(const std::string& port_no);
-    void listen(const std::size_t queue_size) const;
-    std::pair<Socket, Ip_info> accept() const;
+    void                        bind(const std::string& port_no) const;
+    void                        listen(const std::size_t queue_size) const;
+    std::pair<Socket, Ip_info>  accept() const;
 
 
     // ========== Client methods ========== //
@@ -60,13 +62,10 @@ public:
 
     // ========== Common methods ========== //
     // TODO: Add flags for send()
-    int send(const Socket& remote_sock, const std::string& msg);
-    std::string recv();
+    int send(const Socket& remote_sock, const std::string& msg) const;
+    std::string recv() const;
 
     // TODO: Add sendto() and recvfrom() (UDP methods)
-
-    int  get_sockfd() const { return m_sockfd; }
-    void close_socket();  // manually closing the socket
 
 private:
     int m_sockfd{ -1 }; // -1 suggests no socket is created

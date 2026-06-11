@@ -122,7 +122,7 @@ void Socket::close_socket()
 }
 
 
-void Socket::bind(const std::string &port_no)
+void Socket::bind(const std::string &port_no) const
 {
     // res is a linked list which consists of all the
     // info required to bind a socket.
@@ -205,7 +205,7 @@ Ip_info Socket::connect(const std::string& node, const std::string& port_no) con
 }
 
 
-int Socket::send(const Socket& remote_sock, const std::string& msg)
+int Socket::send(const Socket& remote_sock, const std::string& msg) const
 {
     int remote_sockfd{ remote_sock.get_sockfd() };
     auto buf{ msg.c_str() };
@@ -223,10 +223,10 @@ int Socket::send(const Socket& remote_sock, const std::string& msg)
 }
 
 
-std::string Socket::recv()
+std::string Socket::recv() const
 {
     std::string buf{};
-    buf.resize(1024);   // randomly chosen
+    buf.resize(1024);   // FIX: randomly chosen recv buffer
     int flags{ 0 };
 
     if (::recv(m_sockfd, buf.data(), buf.size(), flags) == -1) {
