@@ -22,14 +22,19 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <memory>
+#include <iostream>
 #include <arpa/inet.h>
 
 
 // TCP -> SOCK_STREAM; UDP -> SOCK_DGRAM
 int Sock_helper::convert_sock_type(const Sock_type sock_type)
 {
-    assert(sock_type == Sock_type::TCP 
-        || sock_type == Sock_type::UDP);
+    if (sock_type != Sock_type::TCP
+     && sock_type != Sock_type::UDP) {
+        // TODO: Throw exception
+        std::cerr << "Invalid socket type\n";
+        return -1;
+    }
 
     return sock_type == Sock_type::TCP ? SOCK_STREAM
             : SOCK_DGRAM;
@@ -39,8 +44,12 @@ int Sock_helper::convert_sock_type(const Sock_type sock_type)
 // Overloaded variant of the above; does complete opposite
 Sock_type Sock_helper::convert_sock_type(const int sock_type)
 {
-    assert(sock_type == SOCK_STREAM
-        || sock_type == SOCK_DGRAM);
+    if (sock_type != SOCK_STREAM
+     && sock_type != SOCK_DGRAM) {
+        // TODO: Throw exception
+        std::cerr << "Invalid socket type\n";
+        return -1;
+    }
 
     return sock_type == SOCK_STREAM ? Sock_type::TCP
         : Sock_type::UDP;
@@ -64,6 +73,12 @@ int Sock_helper::get_sock_type(const int sockfd)
 // IPV4 -> AF_INET; IPV6 -> AF_INET6;
 int Sock_helper::convert_ip_family(const Ip_family ip_family)
 {
+    if (ip_family != Ip_family::IPV4
+    &&  ip_family != Ip_family::IPV6) {
+        // TODO: Throw exception
+        std::cerr << "Invalid IP family\n";
+        return -1;
+    }
     assert(ip_family == Ip_family::IPV4 
         || ip_family == Ip_family::IPV6);
 
@@ -75,15 +90,19 @@ int Sock_helper::convert_ip_family(const Ip_family ip_family)
 // Overloaded variant of the above; does complete opposite
 Ip_family Sock_helper::convert_ip_family(const int sa_family_t)
 {
-    assert(sa_family_t == AF_INET
-        || sa_family_t == AF_INET6);
+    if (ip_family != AF_INET
+    &&  ip_family != AF_INET6) {
+        // TODO: Throw exception
+        std::cerr << "Invalid IP family\n";
+        return -1;
+    }
 
     return sa_family_t == AF_INET ? Ip_family::IPV4
         :  Ip_family::IPV6;
 }
 
 
-Ip_family Sock_helper::get_ip_family(const struct sockaddr& addr)
+int Sock_helper::get_ip_family(const struct sockaddr& addr)
 {
     sa_family_t sa_family { addr.sa_family };  // address family
 
@@ -121,13 +140,12 @@ std::string Sock_helper::get_ip_string(const sockaddr &addr)
 
     if (sa_family == AF_INET) {
         src = &(((struct sockaddr_in *)&addr)->sin_addr);
-    }
-    else {
+    } else {
         src = &(((struct sockaddr_in6 *)&addr)->sin6_addr);
     }
 
     inet_ntop(sa_family, src, addr_str, sizeof(addr_str));
-    std::string ip_string { addr_str };
+    std::string ip_string{ addr_str };
     return ip_string;
 }
 
@@ -136,12 +154,12 @@ std::string Sock_helper::get_ip_string(const sockaddr &addr)
 // all the information reqd to bind a socket.
 // To be used when calling bind
 Sock_helper::Addrinfo_list
-Sock_helper::getaddrinfo_list(const std::string& port_no, const Ip_family ip_family)
+Sock_helper::getaddrinfo_list(const std::string& port_no, const int ip_family)
 {
     struct addrinfo hints{};
     std::memset(&hints, 0, sizeof(hints));
 
-    hints.ai_family = Sock_helper::convert_ip_family(ip_family);
+    hints.ai_family = ip_family;
     hints.ai_flags  = AI_PASSIVE;
 
     struct addrinfo* res{};

@@ -122,7 +122,7 @@ void Socket::close_socket()
 }
 
 
-void Socket::bind_to_port(const std::string &port_no)
+void Socket::bind(const std::string &port_no)
 {
     // res is a linked list which consists of all the
     // info required to bind a socket.
@@ -134,7 +134,7 @@ void Socket::bind_to_port(const std::string &port_no)
 
     // Traverse the list and bind
     for (auto p = res.get(); p != nullptr; p = p->ai_next) {
-        if (bind(m_sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+        if (::bind(m_sockfd, p->ai_addr, p->ai_addrlen) == -1) {
             err_msg += strerror(errno);
             err_msg += '\n';
             std::cerr << err_msg;
@@ -150,29 +150,29 @@ void Socket::bind_to_port(const std::string &port_no)
 }
 
 
-void Socket::listen_for_conn(const std::size_t &queue_size) const
+void Socket::listen(const std::size_t queue_size) const
 {
-    if (listen(m_sockfd, queue_size) == -1) {
+    if (::listen(m_sockfd, queue_size) == -1) {
         // TODO: Throw listen exception
         std::cerr << "Listening failed: " << strerror(errno) << '\n';
     }
 }
 
 
-std::pair<Socket, Ip_info> Socket::accept_remote_conn() const
+std::pair<Socket, Ip_info> Socket::accept() const
 {
     struct sockaddr addr{};
     socklen_t       addrlen{ sizeof(addr) };
 
-    int remote_sockfd {};
+    int remote_sockfd{};
     if ((remote_sockfd = accept(m_sockfd, &addr, &addrlen)) == -1) {
         // TODO: Throw exception
         std::cout << "Accept failed\n";
     }
     
     // Connecting to remote means that sock_type must be TCP
-    const Ip_family   ip_family { Sock_helper::convert_ip_family(addr.sa_family) };
-    const std::string ip_string { Sock_helper::get_ip_string(addr) };
+    const int         ip_family{ addr.sa_family };
+    const std::string ip_string{ Sock_helper::get_ip_string(addr) };
 
     Socket remote_socket{ remote_sockfd };
     // TODO: Maybe add an exception??

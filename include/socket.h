@@ -49,9 +49,9 @@ public:
 
 
     // ========== Server methods ========== //
-    void bind_to_port(const std::string& port_no);
-    void listen_for_conn(const std::size_t &queue_size) const;
-    std::pair<Socket, Ip_info> accept_remote_conn() const;
+    void bind(const std::string& port_no);
+    void listen(const std::size_t queue_size) const;
+    std::pair<Socket, Ip_info> accept() const;
 
 
     // ========== Client methods ========== //
