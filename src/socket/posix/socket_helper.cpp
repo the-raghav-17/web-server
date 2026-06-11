@@ -177,17 +177,17 @@ Sock_helper::getaddrinfo_list(const std::string& port_no, const int ip_family)
 // all the information reqd to bind a socket.
 // To be used when calling connect()
 Sock_helper::Addrinfo_list
-Sock_helper::getaddrinfo_list(const std::string& port_no, const Ip_family ip_family,
-                             const std::string& node, Sock_type sock_type)
+Sock_helper::getaddrinfo_list(const std::string& port_no, const int ip_family,
+                             const std::string& node, int sock_type)
 {
     struct addrinfo hints{};
     std::memset(&hints, 0, sizeof(hints));
 
-    hints.ai_family   = Sock_helper::convert_ip_family(ip_family);
-    hints.ai_socktype = Sock_helper::convert_sock_type(sock_type);
+    hints.ai_family   = ip_family;
+    hints.ai_socktype = sock_type;
 
     struct addrinfo* res{};
-    int status { getaddrinfo(node.c_str(), port_no.c_str(), &hints, &res) };
+    int status{ getaddrinfo(node.c_str(), port_no.c_str(), &hints, &res) };
     if (status == -1) {
         // TODO: Throw exception using gai_strerror()
     }

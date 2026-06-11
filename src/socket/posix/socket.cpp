@@ -182,7 +182,7 @@ std::pair<Socket, Ip_info> Socket::accept() const
 }
 
 
-Ip_info Socket::connect_to_remote(const std::string &node, const std::string &port_no) const
+Ip_info Socket::connect(const std::string& node, const std::string& port_no) const
 {
     auto res { Sock_helper::getaddrinfo_list(port_no, m_ip_family, node) };
     std::string err_msg {};
@@ -195,7 +195,7 @@ Ip_info Socket::connect_to_remote(const std::string &node, const std::string &po
         }
         // Connected successfully to remote
         
-        Ip_family   ip_family{ Sock_helper::get_ip_family(*(p->ai_addr)) };
+        int         ip_family{ p->ai_family };
         std::string ip_string{ Sock_helper::get_ip_string(*(p->ai_addr)) };
 
         return { ip_family, ip_string };

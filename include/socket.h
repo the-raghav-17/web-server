@@ -55,8 +55,8 @@ public:
 
 
     // ========== Client methods ========== //
-    Ip_info connect_to_remote(const std::string &node, 
-                              const std::string &port_no) const;
+    Ip_info connect(const std::string& node, 
+                    const std::string& port_no) const;
 
     // ========== Common methods ========== //
     // TODO: Add flags for send()

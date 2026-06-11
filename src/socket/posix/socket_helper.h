@@ -49,8 +49,8 @@ namespace Sock_helper
     getaddrinfo_list(const std::string& port_no, const int ip_family);
 
     Addrinfo_list
-    getaddrinfo_list(const std::string& port_no, const Ip_family ip_family,
-                    const std::string& node, Sock_type sock_type=Sock_type::TCP);
+    getaddrinfo_list(const std::string& port_no, const int ip_family,
+                    const std::string& node, int sock_type=SOCK_STREAM);
 };
 
 
