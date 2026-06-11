@@ -188,7 +188,7 @@ Ip_info Socket::connect(const std::string& node, const std::string& port_no) con
     std::string err_msg {};
 
     for (auto p = res.get(); p != nullptr; p = p->ai_next) {
-        if (connect(m_sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+        if (::connect(m_sockfd, p->ai_addr, p->ai_addrlen) == -1) {
             err_msg += strerror(errno);
             err_msg += '\n';
             continue;
@@ -205,7 +205,7 @@ Ip_info Socket::connect(const std::string& node, const std::string& port_no) con
 }
 
 
-int Socket::send_msg(const Socket& remote_sock, const std::string& msg)
+int Socket::send(const Socket& remote_sock, const std::string& msg)
 {
     int remote_sockfd{ remote_sock.get_sockfd() };
     auto buf{ msg.c_str() };
@@ -214,7 +214,7 @@ int Socket::send_msg(const Socket& remote_sock, const std::string& msg)
 
     int size{};
 
-    if ((size = send(remote_sockfd, buf, buf_size, flags)) == -1) {
+    if ((size = ::send(remote_sockfd, buf, buf_size, flags)) == -1) {
         // TODO: Throw exceptions
         std::cout << "Send failed\n";
     }
@@ -223,13 +223,13 @@ int Socket::send_msg(const Socket& remote_sock, const std::string& msg)
 }
 
 
-std::string Socket::recv_msg()
+std::string Socket::recv()
 {
     std::string buf{};
     buf.resize(1024);   // randomly chosen
     int flags{ 0 };
 
-    if (recv(m_sockfd, buf.data(), buf.size(), flags) == -1) {
+    if (::recv(m_sockfd, buf.data(), buf.size(), flags) == -1) {
         // TODO: Throw exception
         std::cout << "recv failed\n";
     }

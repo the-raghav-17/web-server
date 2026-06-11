@@ -60,10 +60,8 @@ public:
 
     // ========== Common methods ========== //
     // TODO: Add flags for send()
-    int send_msg(const Socket& remote_sock, const std::string& msg);
-    std::string recv_msg();
-
-    // TODO: Add recv()
+    int send(const Socket& remote_sock, const std::string& msg);
+    std::string recv();
 
     // TODO: Add sendto() and recvfrom() (UDP methods)
 
@@ -74,7 +72,7 @@ private:
     int m_sockfd{ -1 }; // -1 suggests no socket is created
     int m_sock_type{};  // SOCK_STREAM or SOCK_DGRAM: Connection type socket supports
     int m_ip_family{};  // AF_INET or AF_INET6: Network type socket supports
-    int m_protocol{};
+    int m_protocol{};   // TODO: m_protocol
 };
 
 
