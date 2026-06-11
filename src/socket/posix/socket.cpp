@@ -26,15 +26,13 @@
 
 
 // Construct a generic socket
-Socket::Socket(const Sock_type sock_type, const Ip_family ip_family)
-    : m_sock_type { sock_type },
-      m_ip_family   { ip_family }
+Socket::Socket(const int sock_type, const int ip_family,
+                const int protocol):
+      m_sock_type{ sock_type },
+      m_ip_family{ ip_family },
+      m_protocol{ protocol }
 {
-    const auto socktype    { Sock_helper::convert_sock_type(sock_type) };
-    const auto addr_family { Sock_helper::convert_ip_family(ip_family) };
-    const auto protocol    { 0 };
-
-    if ((m_sockfd = socket(addr_family, socktype, protocol)) == -1) {
+    if ((m_sockfd = socket(ip_family, sock_type, protocol)) == -1) {
         // TODO: Throw exception
         std::cout << "Socket creation failed";
         return;
@@ -66,6 +64,8 @@ Socket::Socket(const int sockfd)
         return;
     }
 
+    // TODO: SEE: Do we need to add a helper for getting protocol of other socket???
+
     // If ip family and socket type are valid, construct object
     m_sock_type = Sock_helper::convert_sock_type(sock_type);
     m_ip_family = Sock_helper::convert_ip_family(ip_family);
@@ -83,7 +83,10 @@ Socket::~Socket()
 
 
 Socket::Socket(Socket&& other):
-    m_sockfd{ other.m_sockfd }
+    m_sockfd{ other.m_sockfd },
+    m_sock_type{ other.m_sock_type },
+    m_ip_family{ other.m_ip_family }
+
 {
     other.m_sockfd = -1;
 }
@@ -96,7 +99,11 @@ Socket& Socket::operator=(Socket&& other)
     }
 
     this->close_socket();
+
     m_sockfd = other.m_sockfd;
+    m_sock_type = other.m_sock_type;
+    m_ip_family = other.m_ip_family;
+
     other.m_sockfd = -1;
 
     return *this;
@@ -105,7 +112,7 @@ Socket& Socket::operator=(Socket&& other)
 
 // For manually closing the socket.
 // Trying to use the socket object after
-// closing the socket fd throws exceptions
+// closing the socket is error
 void Socket::close_socket()
 {
     if (m_sockfd > 0) {

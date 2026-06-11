@@ -18,19 +18,9 @@
 #include <string>
 
 
-enum class Sock_type
-{
-    TCP, UDP,
-};
-
-enum class Ip_family
-{
-    IPV4, IPV6,
-};
-
 struct Ip_info
 {
-    Ip_family   ip_family;
+    int         ip_family;
     std::string ip_string;
 };
 
@@ -41,7 +31,8 @@ class Socket
 {
 public:
     // Create socket from scratch
-    Socket(const Sock_type sock_type, const Ip_family ip_family);
+    Socket(const int sock_type, const int ip_family,
+            const int protocol);
 
     // Create socket object out of socket fd
     Socket(const int sockfd);
@@ -80,9 +71,10 @@ public:
     void close_socket();  // manually closing the socket
 
 private:
-    int       m_sockfd    { -1 }; // -1 suggests no socket is created
-    Sock_type m_sock_type {};     // TCP or UDP: Connection type socket supports
-    Ip_family m_ip_family {};     // IPV4 or IPV6: Network type socket supports
+    int m_sockfd{ -1 }; // -1 suggests no socket is created
+    int m_sock_type{};  // SOCK_STREAM or SOCK_DGRAM: Connection type socket supports
+    int m_ip_family{};  // AF_INET or AF_INET6: Network type socket supports
+    int m_protocol{};
 };
 
 
