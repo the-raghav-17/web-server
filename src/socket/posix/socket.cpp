@@ -50,25 +50,21 @@ Socket::Socket(const int sockfd)
 {
     // Firstly get ip family and socket type
 
-    int ip_family{ Sock_helper::get_ip_family(sockfd) };
-    if (ip_family != AF_INET && ip_family != AF_INET6) {
+    m_ip_family = Sock_helper::get_ip_family(sockfd);
+    if (m_ip_family != AF_INET && m_ip_family != AF_INET6) {
         // TODO: Throw exception
         std::cout << "Socket cration failed\n";
         return;
     }
 
-    int sock_type{ Sock_helper::get_sock_type(sockfd) };
-    if (sock_type != SOCK_STREAM && sock_type != SOCK_DGRAM) {
+    m_sock_type = Sock_helper::get_sock_type(sockfd);
+    if (m_sock_type != SOCK_STREAM && m_sock_type != SOCK_DGRAM) {
         // TODO: Throw exception
         std::cout << "Socket cration failed\n";
         return;
     }
-
-    // TODO: SEE: Do we need to add a helper for getting protocol of other socket???
 
     // If ip family and socket type are valid, construct object
-    m_sock_type = Sock_helper::convert_sock_type(sock_type);
-    m_ip_family = Sock_helper::convert_ip_family(ip_family);
     m_sockfd    = sockfd;
 }
 
@@ -77,7 +73,7 @@ Socket::~Socket()
 {
     // Close the open socket fd
     if (m_sockfd > 0) {
-        close(m_sockfd);
+        ::close(m_sockfd);
     }
 }
 
@@ -98,7 +94,7 @@ Socket& Socket::operator=(Socket&& other)
         return *this;
     }
 
-    this->close_socket();
+    this->close();
 
     m_sockfd = other.m_sockfd;
     m_sock_type = other.m_sock_type;
@@ -113,10 +109,10 @@ Socket& Socket::operator=(Socket&& other)
 // For manually closing the socket.
 // Trying to use the socket object after
 // closing the socket is error
-void Socket::close_socket()
+void Socket::close()
 {
     if (m_sockfd > 0) {
-        close(m_sockfd);
+        ::close(m_sockfd);
         m_sockfd = -1;
     }
 }
@@ -165,7 +161,7 @@ std::pair<Socket, Ip_info> Socket::accept() const
     socklen_t       addrlen{ sizeof(addr) };
 
     int remote_sockfd{};
-    if ((remote_sockfd = accept(m_sockfd, &addr, &addrlen)) == -1) {
+    if ((remote_sockfd = ::accept(m_sockfd, &addr, &addrlen)) == -1) {
         // TODO: Throw exception
         std::cout << "Accept failed\n";
     }
@@ -207,7 +203,7 @@ Ip_info Socket::connect(const std::string& node, const std::string& port_no) con
 
 int Socket::send(const Socket& remote_sock, const std::string& msg) const
 {
-    int remote_sockfd{ remote_sock.get_sockfd() };
+    int remote_sockfd{ remote_sock.get() };
     auto buf{ msg.c_str() };
     auto buf_size{ msg.size() };
     int flags{ 0 };

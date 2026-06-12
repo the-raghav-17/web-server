@@ -26,36 +26,6 @@
 #include <arpa/inet.h>
 
 
-// TCP -> SOCK_STREAM; UDP -> SOCK_DGRAM
-int Sock_helper::convert_sock_type(const Sock_type sock_type)
-{
-    if (sock_type != Sock_type::TCP
-     && sock_type != Sock_type::UDP) {
-        // TODO: Throw exception
-        std::cerr << "Invalid socket type\n";
-        return -1;
-    }
-
-    return sock_type == Sock_type::TCP ? SOCK_STREAM
-            : SOCK_DGRAM;
-}
-
-
-// Overloaded variant of the above; does complete opposite
-Sock_type Sock_helper::convert_sock_type(const int sock_type)
-{
-    if (sock_type != SOCK_STREAM
-     && sock_type != SOCK_DGRAM) {
-        // TODO: Throw exception
-        std::cerr << "Invalid socket type\n";
-        return -1;
-    }
-
-    return sock_type == SOCK_STREAM ? Sock_type::TCP
-        : Sock_type::UDP;
-}
-
-
 int Sock_helper::get_sock_type(const int sockfd)
 {
     int level = SOL_SOCKET;
@@ -67,52 +37,6 @@ int Sock_helper::get_sock_type(const int sockfd)
     }
 
     return *optval;
-}
-
-
-// IPV4 -> AF_INET; IPV6 -> AF_INET6;
-int Sock_helper::convert_ip_family(const Ip_family ip_family)
-{
-    if (ip_family != Ip_family::IPV4
-    &&  ip_family != Ip_family::IPV6) {
-        // TODO: Throw exception
-        std::cerr << "Invalid IP family\n";
-        return -1;
-    }
-    assert(ip_family == Ip_family::IPV4 
-        || ip_family == Ip_family::IPV6);
-
-    return ip_family == Ip_family::IPV4 ? AF_INET
-        : AF_INET6;
-}
-
-
-// Overloaded variant of the above; does complete opposite
-Ip_family Sock_helper::convert_ip_family(const int sa_family_t)
-{
-    if (ip_family != AF_INET
-    &&  ip_family != AF_INET6) {
-        // TODO: Throw exception
-        std::cerr << "Invalid IP family\n";
-        return -1;
-    }
-
-    return sa_family_t == AF_INET ? Ip_family::IPV4
-        :  Ip_family::IPV6;
-}
-
-
-int Sock_helper::get_ip_family(const struct sockaddr& addr)
-{
-    sa_family_t sa_family { addr.sa_family };  // address family
-
-    assert(sa_family == AF_INET || sa_family == AF_INET6);
-
-    if (sa_family == AF_INET) {
-        return Ip_family::IPV4;
-    } else if (sa_family == AF_INET6) {
-        return Ip_family::IPV6;
-    }
 }
 
 

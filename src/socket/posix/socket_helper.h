@@ -39,12 +39,9 @@ namespace Sock_helper
     
     int         get_sock_type(const int sockfd);   // socket type of socket
 
-    // FIX: Change get_ip_family function
-    int         get_ip_family(const struct sockaddr& addr);
     int         get_ip_family(const int sockfd);  // Address family of socket
     std::string get_ip_string(const struct sockaddr& addr);
 
-    // FIX: Update getaddrinfo_list functions
     Addrinfo_list
     getaddrinfo_list(const std::string& port_no, const int ip_family);
 

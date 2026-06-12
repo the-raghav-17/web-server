@@ -15,6 +15,9 @@
 #define SOCKET_H_
 
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 #include <string>
 
 
@@ -47,8 +50,8 @@ public:
     Socket(Socket&& other);
     Socket& operator=(Socket&& other);
 
-    int  get_sockfd() const { return m_sockfd; }
-    void close_socket();
+    int  get() const { return m_sockfd; }
+    void close();
 
     // ========== Server methods ========== //
     void                        bind(const std::string& port_no) const;
