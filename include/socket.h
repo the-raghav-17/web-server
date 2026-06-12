@@ -65,7 +65,7 @@ public:
 
     // ========== Common methods ========== //
     // TODO: Add flags for send()
-    int send(const Socket& remote_sock, const std::string& msg) const;
+    int send(const std::string& msg) const;
     std::string recv() const;
 
     // TODO: Add sendto() and recvfrom() (UDP methods)

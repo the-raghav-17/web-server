@@ -201,16 +201,15 @@ Ip_info Socket::connect(const std::string& node, const std::string& port_no) con
 }
 
 
-int Socket::send(const Socket& remote_sock, const std::string& msg) const
+int Socket::send(const std::string& msg) const
 {
-    int remote_sockfd{ remote_sock.get() };
     auto buf{ msg.c_str() };
     auto buf_size{ msg.size() };
     int flags{ 0 };
 
     int size{};
 
-    if ((size = ::send(remote_sockfd, buf, buf_size, flags)) == -1) {
+    if ((size = ::send(m_sockfd, buf, buf_size, flags)) == -1) {
         // TODO: Throw exceptions
         std::cout << "Send failed\n";
     }
