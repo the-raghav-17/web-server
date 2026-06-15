@@ -99,7 +99,7 @@ Sock_helper::getaddrinfo_list(const std::string& port_no, const int ip_family)
     struct addrinfo* res{};
     int status { getaddrinfo(NULL, port_no.c_str(), &hints, &res) };
     if (status != 0) {
-        const std::string err_msg{ gai_strerror(status)}
+        const std::string err_msg{ gai_strerror(status) };
         throw Socket_error{ "getaddrinfo: " + err_msg };
     }
 

@@ -32,6 +32,9 @@ Socket::Socket(const int sock_type, const int ip_family,
       m_ip_family{ ip_family },
       m_protocol{ protocol }
 {
+    assert(sock_type == SOCK_STREAM || sock_type == SOCK_DGRAM);
+    assert(ip_family == AF_INET || ip_family == AF_INET6);
+
     if ((m_sockfd = socket(ip_family, sock_type, protocol)) == -1) {
         const std::string err_msg{ strerror(errno) };
         throw Socket_error{ "Failed to create socket object: " + err_msg };
@@ -49,14 +52,26 @@ Socket::Socket(const int sockfd)
 {
     // Firstly get ip family and socket type
 
-    m_ip_family = Sock_helper::get_ip_family(sockfd);
-    if (m_ip_family != AF_INET && m_ip_family != AF_INET6) {
-        throw Socket_error{ "Socket IP family is not AF_INET or AF_INET6" };
+    try {
+        m_ip_family = Sock_helper::get_ip_family(sockfd);
+    } catch(const Socket_error& err) {
+        throw Socket_error{ "Failed to create socket object: get_ip_family: "
+                            + std::string{ err.what() } };
     }
 
-    m_sock_type = Sock_helper::get_sock_type(sockfd);
+    if (m_ip_family != AF_INET && m_ip_family != AF_INET6) {
+        throw Socket_error{ "Failed to create socket object: Invalid IP family" };
+    }
+
+    try {
+        m_sock_type = Sock_helper::get_sock_type(sockfd);
+    } catch(const Socket_error& err) {
+        throw Socket_error{ "Failed to create socket object: get_sock_type: "
+                            + std::string(err.what()) };
+    }
+
     if (m_sock_type != SOCK_STREAM && m_sock_type != SOCK_DGRAM) {
-        throw Socket_error{ "Socket type is not SOCK_STREAM or SOCK_DGRAM" };
+        throw Socket_error{ "Failed to create socket object: Invalid socket type" };
     }
 
     // If ip family and socket type are valid, construct object
