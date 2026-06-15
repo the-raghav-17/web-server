@@ -48,7 +48,7 @@ Socket::Socket(const int sock_type, const int ip_family,
 // Encapsulate socket fd into an object.
 // Supported socket types are Stream socket and Datagram socket
 // Address family of socket fd must be either IPv4 or IPv6
-Socket::Socket(const int sockfd)
+Socket::Socket(int& sockfd)
 {
     // Firstly get ip family and socket type
 
@@ -75,7 +75,8 @@ Socket::Socket(const int sockfd)
     }
 
     // If ip family and socket type are valid, construct object
-    m_sockfd    = sockfd;
+    m_sockfd = sockfd;
+    sockfd   = -1;
 }
 
 

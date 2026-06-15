@@ -48,7 +48,8 @@ public:
             const int protocol);
 
     // Create socket object out of socket fd
-    Socket(const int sockfd);
+    // sockfd will be set to -1
+    Socket(int& sockfd);
 
     ~Socket();
 
