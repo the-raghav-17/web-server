@@ -33,9 +33,8 @@ Socket::Socket(const int sock_type, const int ip_family,
       m_protocol{ protocol }
 {
     if ((m_sockfd = socket(ip_family, sock_type, protocol)) == -1) {
-        // TODO: Throw exception
-        std::cout << "Socket creation failed";
-        return;
+        const std::string err_msg{ strerror(errno) };
+        throw Socket_error{ "Failed to create socket object: " + err_msg };
     }
 
     // TODO: Add setsockopt for socket options
@@ -123,7 +122,7 @@ void Socket::bind(const std::string &port_no) const
     // res is a linked list which consists of all the
     // info required to bind a socket.
 
-    // SEE: How to add exception when getaddrino_list fails
+    // SEE: How to add exception when getaddrinfo_list fails
     auto res{ Sock_helper::getaddrinfo_list(port_no, m_ip_family) };
 
     std::string err_msg {};
@@ -133,7 +132,6 @@ void Socket::bind(const std::string &port_no) const
         if (::bind(m_sockfd, p->ai_addr, p->ai_addrlen) == -1) {
             err_msg += strerror(errno);
             err_msg += '\n';
-            std::cerr << err_msg;
             continue;
         }
 
@@ -141,16 +139,15 @@ void Socket::bind(const std::string &port_no) const
         return;
     }
 
-    // TODO: Throw exception
-    std::cerr << "Binding falied\n";
+    throw Socket_error{ "Binding failed: " + err_msg };
 }
 
 
 void Socket::listen(const std::size_t queue_size) const
 {
     if (::listen(m_sockfd, queue_size) == -1) {
-        // TODO: Throw listen exception
-        std::cerr << "Listening failed: " << strerror(errno) << '\n';
+        const std::string err_msg{ strerror(errno) };
+        throw Socket_error{ "Listen failed: " + err_msg };
     }
 }
 
@@ -162,8 +159,8 @@ std::pair<Socket, Ip_info> Socket::accept() const
 
     int remote_sockfd{};
     if ((remote_sockfd = ::accept(m_sockfd, &addr, &addrlen)) == -1) {
-        // TODO: Throw exception
-        std::cout << "Accept failed\n";
+        const std::string err_msg{ strerror(errno) };
+        throw Socket_error{ "Accept failed: " + err_msg };
     }
     
     // Connecting to remote means that sock_type must be TCP
@@ -196,8 +193,8 @@ Ip_info Socket::connect(const std::string& node, const std::string& port_no) con
 
         return { ip_family, ip_string };
     }
-    // TODO: Throw exception with error message being retrieved from above
-    std::cout << "Connect failed\n";
+
+    throw Socket_error{ "Connect failed: " + err_msg };
 }
 
 
@@ -210,8 +207,8 @@ int Socket::send(const std::string& msg) const
     int size{};
 
     if ((size = ::send(m_sockfd, buf, buf_size, flags)) == -1) {
-        // TODO: Throw exceptions
-        std::cout << "Send failed\n";
+        const std::string err_msg{ strerror(errno) };
+        throw Socket_error{ "Send failed: " + err_msg };
     }
 
     return size;
@@ -225,8 +222,8 @@ std::string Socket::recv() const
     int flags{ 0 };
 
     if (::recv(m_sockfd, buf.data(), buf.size(), flags) == -1) {
-        // TODO: Throw exception
-        std::cout << "recv failed\n";
+        const std::string err_msg{ strerror(errno) };
+        throw Socket_error{ "Recv failed: " + err_msg };
     }
 
     return buf;

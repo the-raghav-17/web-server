@@ -19,6 +19,17 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <string>
+#include <stdexcept>
+
+
+// Exception class
+class Socket_error : public std::runtime_error
+{
+public:
+    Socket_error(const std::string& msg)
+        : runtime_error{ msg }
+    {}
+};
 
 
 struct Ip_info
@@ -27,7 +38,6 @@ struct Ip_info
     std::string ip_string;
 };
 
-// TODO: Define exceptions for socket
 
 
 class Socket
