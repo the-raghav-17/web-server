@@ -51,16 +51,12 @@ Socket::Socket(const int sockfd)
 
     m_ip_family = Sock_helper::get_ip_family(sockfd);
     if (m_ip_family != AF_INET && m_ip_family != AF_INET6) {
-        // TODO: Throw exception
-        std::cout << "Socket cration failed\n";
-        return;
+        throw Socket_error{ "Socket IP family is not AF_INET or AF_INET6" };
     }
 
     m_sock_type = Sock_helper::get_sock_type(sockfd);
     if (m_sock_type != SOCK_STREAM && m_sock_type != SOCK_DGRAM) {
-        // TODO: Throw exception
-        std::cout << "Socket cration failed\n";
-        return;
+        throw Socket_error{ "Socket type is not SOCK_STREAM or SOCK_DGRAM" };
     }
 
     // If ip family and socket type are valid, construct object

@@ -33,7 +33,8 @@ int Sock_helper::get_sock_type(const int sockfd)
     socklen_t optlen{ 4 };
 
     if (getsockopt(sockfd, level, SO_TYPE, optval, &optlen) == -1) {
-        return -1;
+        const std::string err_msg{ strerror(errno) };
+        throw Socket_error{ "getsockopt: " + err_msg };
     }
 
     return *optval;
@@ -47,7 +48,8 @@ int Sock_helper::get_ip_family(const int sockfd)
     socklen_t optlen{ 4 };
 
     if (getsockopt(sockfd, level, SO_DOMAIN, optval, &optlen) == -1) {
-        return -1;
+        const std::string err_msg{ strerror(errno) };
+        throw Socket_error{ "getsockopt: " + err_msg };
     }
 
     return *optval;
@@ -59,6 +61,10 @@ std::string Sock_helper::get_ip_string(const sockaddr &addr)
     char addr_str[INET6_ADDRSTRLEN];  // buffer to store string
     sa_family_t sa_family { addr.sa_family };  // address family
 
+    if (sa_family != AF_INET && sa_family != AF_INET6) {
+        throw Socket_error{ "get_ip_string: Invalid IP family" };
+    }
+
     // This extracts the address part from sockaddr
     void *src = nullptr;
 
@@ -68,7 +74,11 @@ std::string Sock_helper::get_ip_string(const sockaddr &addr)
         src = &(((struct sockaddr_in6 *)&addr)->sin6_addr);
     }
 
-    inet_ntop(sa_family, src, addr_str, sizeof(addr_str));
+    if (inet_ntop(sa_family, src, addr_str, sizeof(addr_str)) == nullptr) {
+        const std::string err_msg{ strerror(errno) };
+        throw Socket_error{ "inet_ntop: " + err_msg };
+    }
+
     std::string ip_string{ addr_str };
     return ip_string;
 }
@@ -88,8 +98,9 @@ Sock_helper::getaddrinfo_list(const std::string& port_no, const int ip_family)
 
     struct addrinfo* res{};
     int status { getaddrinfo(NULL, port_no.c_str(), &hints, &res) };
-    if (status == -1) {
-        // TODO: Throw exception using gai_strerror()
+    if (status != 0) {
+        const std::string err_msg{ gai_strerror(status)}
+        throw Socket_error{ "getaddrinfo: " + err_msg };
     }
 
     Addrinfo_list list{ res };
