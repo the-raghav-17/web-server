@@ -138,8 +138,9 @@ void Socket::bind(const std::string &port_no) const
     // info required to bind a socket.
 
     std::string err_msg {};
+    Sock_helper::Addrinfo_list res{};
     try {
-        auto res{ Sock_helper::getaddrinfo_list(port_no, m_ip_family) };
+        res = Sock_helper::getaddrinfo_list(port_no, m_ip_family);
     } catch(const Socket_error& err) {
         err_msg = err.what();
         throw Socket_error{ "Binding failed: " + err_msg };
@@ -197,8 +198,9 @@ Ip_info Socket::connect(const std::string& node, const std::string& port_no) con
 {
     std::string err_msg{};
 
+    Sock_helper::Addrinfo_list res{};
     try {
-        auto res{ Sock_helper::getaddrinfo_list(port_no, m_ip_family, node) };
+        res = Sock_helper::getaddrinfo_list(port_no, m_ip_family, node);
     } catch(const Socket_error& err) {
         err_msg = err.what();
         throw Socket_error{ "Connect failed: " + err_msg };
