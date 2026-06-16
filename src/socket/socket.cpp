@@ -182,13 +182,12 @@ std::pair<Socket, Ip_info> Socket::accept() const
                            + std::string{ strerror(errno) } };
     }
     
-    // Connecting to remote means that sock_type must be TCP
     const int         ip_family{ addr.sa_family };
     const std::string ip_string{ Sock_helper::get_ip_string(addr) };
+    Ip_info ip_info{ ip_family, ip_string };
 
     // FIX: Create another constructor that takes sockfd and ipfamily and socktype
     Socket remote_socket{ remote_sockfd };
-    Ip_info ip_info{ ip_family, ip_string };
 
     return std::make_pair(std::move(remote_socket), ip_info);
 }

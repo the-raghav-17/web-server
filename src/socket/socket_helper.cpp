@@ -30,7 +30,7 @@ int Sock_helper::get_sock_type(const int sockfd)
 {
     int level = SOL_SOCKET;
     int optval[1]{};
-    socklen_t optlen{ 4 };
+    socklen_t optlen = sizeof(optval);
 
     if (getsockopt(sockfd, level, SO_TYPE, optval, &optlen) == -1) {
         const std::string err_msg{ strerror(errno) };
@@ -45,7 +45,7 @@ int Sock_helper::get_ip_family(const int sockfd)
 {
     int level = SOL_SOCKET;
     int optval[1]{};
-    socklen_t optlen{ 4 };
+    socklen_t optlen = sizeof(optval);
 
     if (getsockopt(sockfd, level, SO_DOMAIN, optval, &optlen) == -1) {
         const std::string err_msg{ strerror(errno) };
@@ -59,13 +59,13 @@ int Sock_helper::get_ip_family(const int sockfd)
 std::string Sock_helper::get_ip_string(const sockaddr &addr)
 {
     char addr_str[INET6_ADDRSTRLEN];  // buffer to store string
-    sa_family_t sa_family { addr.sa_family };  // address family
+    sa_family_t sa_family{ addr.sa_family };  // address family
 
     if (sa_family != AF_INET && sa_family != AF_INET6) {
         throw Socket_error{ "get_ip_string: Invalid IP family" };
     }
 
-    // This extracts the address part from sockaddr
+    // Extract the address part from sockaddr
     void *src = nullptr;
 
     if (sa_family == AF_INET) {
