@@ -86,30 +86,6 @@ std::string Sock_helper::get_ip_string(const sockaddr &addr)
 
 // Return the res linked list which consits of
 // all the information reqd to bind a socket.
-// To be used when calling bind
-Sock_helper::Addrinfo_list
-Sock_helper::getaddrinfo_list(const std::string& port_no, const int ip_family)
-{
-    struct addrinfo hints{};
-    std::memset(&hints, 0, sizeof(hints));
-
-    hints.ai_family = ip_family;
-    hints.ai_flags  = AI_PASSIVE;
-
-    struct addrinfo* res{};
-    int status{ getaddrinfo(NULL, port_no.c_str(), &hints, &res) };
-    if (status != 0) {
-        const std::string err_msg{ gai_strerror(status) };
-        throw Socket_error{ "getaddrinfo: " + err_msg };
-    }
-
-    Addrinfo_list list{ res };
-    return list;
-}
-
-
-// Return the res linked list which consits of
-// all the information reqd to bind a socket.
 // To be used when calling connect()
 Sock_helper::Addrinfo_list
 Sock_helper::getaddrinfo_list(const std::string& port_no, const int ip_family,
@@ -121,8 +97,10 @@ Sock_helper::getaddrinfo_list(const std::string& port_no, const int ip_family,
     hints.ai_family   = ip_family;
     hints.ai_socktype = sock_type;
 
+    const char* host{ node == "" ? nullptr : node.c_str() };
+
     struct addrinfo* res{};
-    int status{ getaddrinfo(node.c_str(), port_no.c_str(), &hints, &res) };
+    int status{ getaddrinfo(host, port_no.c_str(), &hints, &res) };
     if (status != 0) {
         const std::string err_msg{ gai_strerror(status) };
         throw Socket_error{ "getaddrinfo: " + err_msg };

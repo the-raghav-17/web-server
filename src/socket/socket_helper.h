@@ -43,11 +43,8 @@ namespace Sock_helper
     std::string get_ip_string(const struct sockaddr& addr);
 
     Addrinfo_list
-    getaddrinfo_list(const std::string& port_no, const int ip_family);
-
-    Addrinfo_list
     getaddrinfo_list(const std::string& port_no, const int ip_family,
-                    const std::string& node, int sock_type=SOCK_STREAM);
+                    const std::string& node="", int sock_type=SOCK_STREAM);
 };
 
 
