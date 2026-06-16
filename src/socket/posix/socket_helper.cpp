@@ -97,7 +97,7 @@ Sock_helper::getaddrinfo_list(const std::string& port_no, const int ip_family)
     hints.ai_flags  = AI_PASSIVE;
 
     struct addrinfo* res{};
-    int status { getaddrinfo(NULL, port_no.c_str(), &hints, &res) };
+    int status{ getaddrinfo(NULL, port_no.c_str(), &hints, &res) };
     if (status != 0) {
         const std::string err_msg{ gai_strerror(status) };
         throw Socket_error{ "getaddrinfo: " + err_msg };
@@ -123,8 +123,9 @@ Sock_helper::getaddrinfo_list(const std::string& port_no, const int ip_family,
 
     struct addrinfo* res{};
     int status{ getaddrinfo(node.c_str(), port_no.c_str(), &hints, &res) };
-    if (status == -1) {
-        // TODO: Throw exception using gai_strerror()
+    if (status != 0) {
+        const std::string err_msg{ gai_strerror(status) };
+        throw Socket_error{ "getaddrinfo: " + err_msg };
     }
 
     Addrinfo_list list{ res };

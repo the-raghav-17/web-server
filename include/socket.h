@@ -43,6 +43,9 @@ struct Ip_info
 class Socket
 {
 public:
+    // TODO: Add default constructor
+    // TODO: Add .create() method to create socket out of default constructed socket
+
     // Create socket from scratch
     Socket(const int sock_type, const int ip_family,
             const int protocol);
