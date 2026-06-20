@@ -40,8 +40,8 @@ Socket::Socket(const int sock_type, const int ip_family,
         throw Socket_error{ "Failed to create socket object: " + err_msg };
     }
 
-    // TODO: Add setsockopt for socket options
-    // SEE: Purpose and options in setsockopt
+    int val{ 1 };
+    setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
 }
 
 
