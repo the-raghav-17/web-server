@@ -41,7 +41,10 @@ Socket::Socket(const int sock_type, const int ip_family,
     }
 
     int val{ 1 };
-    setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
+    if (setsockopt(m_sockfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) == -1) {
+        const std::string err_msg{ strerror(errno) };
+        throw Socket_error{ "Failed to create socket object: setsockopt: " + err_msg };
+    }
 }
 
 
