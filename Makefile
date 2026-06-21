@@ -5,13 +5,15 @@ INCL     := -Iinclude
 SRC_DIR   := src
 BUILD_DIR := build
 
-MODULES := $(SRC_DIR)/socket
+MODULES := $(SRC_DIR) $(SRC_DIR)/socket
 
 SRCS := $(shell find $(MODULES) -name '*.cpp')
 OBJS := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:%.o=%.d)
+OUT  := server
 
 all: $(OBJS)
+	$(CXX) $^ -o $(OUT)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(dir $@)
@@ -20,4 +22,4 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 -include $(DEPS)
 
 clean:
-	rm -fr build
+	rm -fr build $(OUT)

@@ -15,12 +15,17 @@
 
 #include "server.h"
 
+#include <iostream>
+
 
 int main()
 {
-    // TODO: Add exceptions for the server
-    Server server{};
-    server.start();
+    try {
+        Server server{};
+        server.start();
+    } catch(...) {
+        std::cerr << "main: Uncaught execption recieved...\n";
+    }
 
     return 0;
 }
