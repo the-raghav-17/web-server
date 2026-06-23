@@ -9,10 +9,15 @@ namespace Http
         GET, HEAD, POST,
     };
 
+    enum class Version
+    {
+        V1_1, V1_0,
+    }:
+
     struct Request
     {
         bool        is_valid;
-        std::string version;
+        Version     version;
         Method      method;
         std::string path;
     };

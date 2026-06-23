@@ -15,16 +15,14 @@
 #define SERVER_H_
 
 
-// TODO: Define exceptions for server class that indicate error
-// to the main function
-
-
-// SEE: Should server be a class or a function is sufficient?
-// SEE: Should server construct the socket and save it as private member?
 class Server
 {
 public:
+    // TODO: Add server constructor that enables signal handling andd initialized invariants
     void start() const;
+
+private:
+    void handle_client(Socket& remote_socket) const;
 };
 
 

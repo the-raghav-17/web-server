@@ -256,3 +256,4 @@ std::string Socket::recv() const
 
     return buf;
 }
+
