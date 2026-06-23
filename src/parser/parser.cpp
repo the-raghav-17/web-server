@@ -1,26 +1,33 @@
 #include "parser.h"
+#include "parser_helper.h"
 #include "http.h"
 
 #include <string>
 
 
-Http::Request Parser::parse_request(const std::string& msg) const
+Http::Request Parser::parse_request(const std::string& request_msg) const
 {
     Http::Request request{};
 
-    if (parse_request_line(request, msg) == -1) {
+    // For now, request_line is request_msg
+    // TODO: Logic for dividing request msg into various components
+    std::string request_line{ request_msg };
+
+    if (parse_request_line(request_line, request) == -1) {
         return request;
     }
+
+    // TODO: Parsing headers and content
 
     return request;
 }
 
 
-int parse_request_line(Http::Request& request, const std::string& request_line) const
+int parse_request_line(const std::string& request_line, Http::Request& request) const
 {
     using TOK_COUNT = 3;
 
-    auto parsed_request{ Parse_helper::tokeize_string(request_line, ' ') };
+    auto parsed_request{ Parser_helper::tokeize_string(request_line, ' ') };
     if (parsed_request.size() != TOK_COUNT) {
         request.is_valid = false;
         return -1;

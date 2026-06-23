@@ -10,10 +10,10 @@
 class Parser
 {
 public:
-    Http::Request parse_request(const std::string& msg) const;
+    Http::Request parse_request(const std::string& request_msg) const;
 
 private:
-    
+    int parse_request_line(const std::string& request_line, Http::Request& request) const;
 };
 
 
