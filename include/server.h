@@ -15,6 +15,9 @@
 #define SERVER_H_
 
 
+#include "socket.h"
+
+
 class Server
 {
 public:

@@ -17,4 +17,4 @@ private:
 };
 
 
-#undef // PARSER_H_
+#endif // PARSER_H_

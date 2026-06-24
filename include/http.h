@@ -2,6 +2,9 @@
 #define HTTP_H_
 
 
+#include <string>
+
+
 namespace Http
 {
     enum class Method
@@ -12,7 +15,7 @@ namespace Http
     enum class Version
     {
         V1_1, V1_0,
-    }:
+    };
 
     struct Request
     {
@@ -24,4 +27,4 @@ namespace Http
 };
 
 
-#undef // HTTP_H_
+#endif // HTTP_H_

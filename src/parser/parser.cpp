@@ -23,19 +23,19 @@ Http::Request Parser::parse_request(const std::string& request_msg) const
 }
 
 
-int parse_request_line(const std::string& request_line, Http::Request& request) const
+int Parser::parse_request_line(const std::string& request_line, Http::Request& request) const
 {
-    using TOK_COUNT = 3;
+    constexpr std::size_t TOK_COUNT{ 3 };
 
-    auto parsed_request{ Parser_helper::tokeize_string(request_line, ' ') };
+    auto parsed_request{ Parser_helper::tokenize_string(request_line, " ") };
     if (parsed_request.size() != TOK_COUNT) {
         request.is_valid = false;
         return -1;
     }
 
-    using METHOD_INDEX   = 0;
-    using RESOURCE_INDEX = 1;
-    using VERSION_INDEX  = 2;
+    constexpr std::size_t METHOD_INDEX{ 0 };
+    constexpr std::size_t RESOURCE_INDEX{ 0 };
+    constexpr std::size_t VERSION_INDEX{ 0 };
 
     // Get the method type
     auto& method{ parsed_request.at(METHOD_INDEX) };
@@ -67,7 +67,8 @@ int parse_request_line(const std::string& request_line, Http::Request& request) 
     }
     else {
         request.is_valid = false;
+        return -1;
     }
 
-    return request;
+    return 0;
 }

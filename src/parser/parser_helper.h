@@ -1,5 +1,5 @@
-#ifndef PARSER_H_
-#define PARSER_H_
+#ifndef PARSER_HELPER_H_
+#define PARSER_HELPER_H_
 
 
 #include <vector>
@@ -12,4 +12,4 @@ namespace Parser_helper
 };
 
 
-#endif // PARSER_H_
+#endif // PARSER_HELPER_H_
