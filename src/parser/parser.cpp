@@ -7,18 +7,18 @@
 
 Http::Request Parser::parse_request(const std::string& request_msg) const
 {
+    auto parsed_request{ Parser_helper::tokenize_string(request_msg, "\r\n") };
+    constexpr int REQUEST_LINE_INDEX{ 0 };
+
     Http::Request request{};
 
-    auto parsed_request{ Parser_helper::tokenize_string(request_msg, "\n") };
-
-    const std::string request_line{ parsed_request.at(0) };
+    const std::string& request_line{ parsed_request.at(REQUEST_LINE_INDEX) };
     if (parse_request_line(request_line, request) == -1) {
         return request;
     }
 
     // TODO: Parsing headers and content
 
-    request.is_valid = true;
     return request;
 }
 
