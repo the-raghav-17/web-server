@@ -9,16 +9,16 @@ Http::Request Parser::parse_request(const std::string& request_msg) const
 {
     Http::Request request{};
 
-    // For now, request_line is request_msg
-    // TODO: Logic for dividing request msg into various components
-    std::string request_line{ request_msg };
+    auto parsed_request{ Parser_helper::tokenize_string(request_msg, "\n") };
 
+    const std::string request_line{ parsed_request.at(0) };
     if (parse_request_line(request_line, request) == -1) {
         return request;
     }
 
     // TODO: Parsing headers and content
 
+    request.is_valid = true;
     return request;
 }
 
@@ -27,18 +27,18 @@ int Parser::parse_request_line(const std::string& request_line, Http::Request& r
 {
     constexpr std::size_t TOK_COUNT{ 3 };
 
-    auto parsed_request{ Parser_helper::tokenize_string(request_line, " ") };
-    if (parsed_request.size() != TOK_COUNT) {
+    auto parsed_request_line{ Parser_helper::tokenize_string(request_line, " ") };
+    if (parsed_request_line.size() != TOK_COUNT) {
         request.is_valid = false;
         return -1;
     }
 
     constexpr std::size_t METHOD_INDEX{ 0 };
-    constexpr std::size_t RESOURCE_INDEX{ 0 };
-    constexpr std::size_t VERSION_INDEX{ 0 };
+    constexpr std::size_t RESOURCE_INDEX{ 1 };
+    constexpr std::size_t VERSION_INDEX{ 2 };
 
     // Get the method type
-    auto& method{ parsed_request.at(METHOD_INDEX) };
+    auto& method{ parsed_request_line.at(METHOD_INDEX) };
     if (method == std::string{ "GET" }) {
         request.method = Http::Method::GET;
     }
@@ -54,11 +54,11 @@ int Parser::parse_request_line(const std::string& request_line, Http::Request& r
     }
 
     // Get the resource path
-    request.path = std::move(parsed_request.at(RESOURCE_INDEX));
+    request.path = std::move(parsed_request_line.at(RESOURCE_INDEX));
     // TODO: Add check for resource path syntax
 
     // Get the http version
-    auto& version{ parsed_request.at(VERSION_INDEX) };
+    auto& version{ parsed_request_line.at(VERSION_INDEX) };
     if (version == std::string{ "HTTP/1.0" }) {
         request.version = Http::Version::V1_0;
     }
@@ -70,5 +70,6 @@ int Parser::parse_request_line(const std::string& request_line, Http::Request& r
         return -1;
     }
 
+    request.is_valid = true;
     return 0;
 }

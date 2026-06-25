@@ -5,7 +5,7 @@ INCL     := -Iinclude
 SRC_DIR   := src
 BUILD_DIR := build
 
-MODULES := $(SRC_DIR) $(SRC_DIR)/socket
+MODULES := $(SRC_DIR) $(SRC_DIR)/socket $(SRC_DIR)/parser
 
 SRCS   := $(shell find $(MODULES) -maxdepth 1 -name '*.cpp')
 OBJS   := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
