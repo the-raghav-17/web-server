@@ -16,6 +16,7 @@
 
 
 #include "socket.h"
+#include "http.h"
 
 
 class Server
@@ -26,6 +27,7 @@ public:
 
 private:
     void handle_client(Socket& remote_socket) const;
+    void print_request_details(const Http::Request& msg_request) const;
 };
 
 

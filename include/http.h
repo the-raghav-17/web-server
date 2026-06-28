@@ -7,6 +7,8 @@
 
 namespace Http
 {
+    const static std::string VERSION{ "1.0" };
+
     enum class Method
     {
         GET, HEAD, POST,

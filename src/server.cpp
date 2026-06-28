@@ -39,6 +39,7 @@ Logger log{ "Server" };
 // Overview of everything the server does, happens here
 void Server::start() const
 {
+    // FIX: Rewrite the try-catch block of server::start() to handle connection acceptance differently
 
     try {
         Socket socket{ SOCK_STREAM, AF_INET, 0 };
@@ -71,10 +72,22 @@ void Server::handle_client(Socket& remote_socket) const
 
     // TODO: client handling
     Parser parser{};
-    Http::Request msg_request{ parser.parse_request(request_msg) };
+    Http::Request parsed_request{ parser.parse_request(request_msg) };
+
+    print_request_details(parsed_request);
 
     // auto msg_reply{ handle_request(msg_reply) };
     // remote_socket.send(msg_reply);
+}
+
+
+void Server::print_request_details(const Http::Request& msg_request) const
+{
+    using namespace Http;
+
+    if (!msg_request.is_valid) {
+        std::cout << "Invalid request from the client\n";
+    }
 
     if (msg_request.is_valid) {
         log("Is valid request");
