@@ -19,12 +19,31 @@ namespace Http
         V1_1, V1_0,
     };
 
+    enum class Response_code
+    {
+        OK = 200,
+
+        BAD_REQUEST    = 400,
+        UNAUTHORIZED   = 401,
+        FORBIDDEN      = 403,
+        PAGE_NOT_FOUND = 404,
+        
+        INTERNAL_SERVER_ERR = 500,
+    };
+
     struct Request
     {
         bool        is_valid;
         Version     version;
         Method      method;
         std::string path;
+    };
+
+    struct Response
+    {
+        Version       version;
+        Response_code code;
+        std::string   code_msg;
     };
 };
 
