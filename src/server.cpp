@@ -64,20 +64,49 @@ void Server::start() const
 
 void Server::handle_client(Socket& remote_socket) const
 {
-    using namespace Http;
     const std::string request_msg{ remote_socket.recv() };
 
     log("Message recieved: ");
     std::cout << request_msg << '\n';
 
     // TODO: client handling
-    Parser parser{};
-    Http::Request parsed_request{ parser.parse_request(request_msg) };
+    Http::Request parsed_request{ m_parser.parse_request(request_msg) };
 
     print_request_details(parsed_request);
 
-    // auto msg_reply{ handle_request(msg_reply) };
-    // remote_socket.send(msg_reply);
+    auto response_msg{ generate_response(parsed_request) };
+    log("Response:\n" + response_msg);
+    remote_socket.send(response_msg);
+}
+
+
+std::string Server::generate_response(const Http::Request& request) const
+{
+    Http::Response response{};
+    response.version = Http::Version::V1_0;
+
+    if (!request.is_valid) {
+        response.code = Http::Response_code::BAD_REQUEST;
+        return generate_response_line(response);
+    }
+
+    // TODO: Check path of the file requested and see if it's a valid file and construct message accordingly
+}
+
+
+std::string Server::generate_response_line(const Http::Response& response) const
+{
+    std::string response_line{ "HTTP/" };
+    response_line += Http::get_http_version_string(response.version);
+
+    response_line += " ";
+
+    response_line += Http::get_code_string(response.code);
+    response_line += " ";
+    response_line += Http::get_code_msg(response.code);
+
+    response_line += "\n";
+    return response_line;
 }
 
 
