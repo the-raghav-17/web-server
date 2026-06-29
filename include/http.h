@@ -43,8 +43,12 @@ namespace Http
     {
         Version       version;
         Response_code code;
-        std::string   code_msg;
     };
+
+
+    std::string get_http_version_string(const Version& version);
+    std::string get_code_string(const Response_code& code);
+    std::string get_code_msg(const Response_code& code);
 };
 
 
