@@ -82,31 +82,83 @@ void Server::handle_client(Socket& remote_socket) const
 
 std::string Server::generate_response(const Http::Request& request) const
 {
-    Http::Response response{};
-    response.version = Http::Version::V1_0;
+    auto version{ Http::Version::V1_0 };
+    auto method{ request.method };
+    std::string path{ process_path(request.path) };
 
     if (!request.is_valid) {
-        response.code = Http::Response_code::BAD_REQUEST;
-        return generate_response_line(response);
+        auto code{ Http::Response_code::BAD_REQUEST };
+        return generate_response_line(version, code);
     }
 
-    // TODO: Check path of the file requested and see if it's a valid file and construct message accordingly
+    // Generate content header
+    auto [code, content_header] = generate_content_header(path);
+    if (code != Http::Response_code::OK) {
+        return generate_response_line(version, code);
+    }
+
+    // Generate content body (only if method is GET)
+    std::string content_body{};
+    if (method == Http::Method::GET) {
+        auto [code, body] = generate_content_body(path);
+        if (code != Http::Response_code::OK) {
+            return generate_response_line(version, code);
+        }
+        content_body += body;
+    }
+
+    // Get the response line
+    auto response_code{ Http::Response_code::OK };
+    auto response_line{ generate_response_line(version, response_code) };
+
+    std::string response{
+        response_line + "\n" + content_header + "\n" + "\n" + content_body
+    };
+
+    return response;
 }
 
 
-std::string Server::generate_response_line(const Http::Response& response) const
+std::string Server::generate_response_line(const Http::Version& version,
+                                  const Http::Response_code& response_code) const
 {
     std::string response_line{ "HTTP/" };
-    response_line += Http::get_http_version_string(response.version);
+    response_line += Http::get_http_version_string(version);
 
     response_line += " ";
 
-    response_line += Http::get_code_string(response.code);
+    response_line += Http::get_code_string(response_code);
     response_line += " ";
-    response_line += Http::get_code_msg(response.code);
+    response_line += Http::get_code_msg(response_code);
 
     response_line += "\n";
     return response_line;
+}
+
+
+std::pair<Http::Response_code, std::string>
+Server::generate_content_header(const std::string& path) const
+{
+    // TODO: generate_content_header
+}
+
+
+std::pair<Http::Response_code, std::string>
+Server::generate_content_body(const std::string& path) const
+{
+    // TODO: generate_content_body
+}
+
+
+std::string Server::process_path(const std::string& path) const
+{
+    std::string processed_path{ path };
+    if (processed_path == "/") {
+        processed_path += "index.html";
+    }
+
+    processed_path = m_root_dir.string() + path;
+    return processed_path;
 }
 
 

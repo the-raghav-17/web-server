@@ -53,7 +53,14 @@ private:
     void print_request_details(const Http::Request& msg_request) const;
 
     std::string generate_response(const Http::Request& request) const;
-    std::string generate_response_line(const Http::Response& response) const;
+
+    std::string generate_response_line(const Http::Version& version,
+                                      const Http::Response_code& response_code) const;
+
+    std::pair<Http::Response_code, std::string> generate_content_header(const std::string& path) const;
+    std::pair<Http::Response_code, std::string> generate_content_body(const std::string& path) const;
+
+    std::string process_path(const std::string& path) const;
 };
 
 
