@@ -45,9 +45,6 @@ int Parser::parse_request_line(const std::string& request_line, Http::Request& r
     else if (method == std::string{ "HEAD" }) {
         request.method = Http::Method::HEAD;
     }
-    else if (method == std::string{ "POST" }) {
-        request.method = Http::Method::POST;
-    }
     else {
         request.is_valid = false;
         return -1;

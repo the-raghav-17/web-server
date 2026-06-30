@@ -134,9 +134,6 @@ void Server::print_request_details(const Http::Request& msg_request) const
     else if (msg_request.method == Method::HEAD) {
         log("Method: HEAD");
     }
-    else if (msg_request.method == Method::POST) {
-        log("Method: POST");
-    }
 
     log("Request path: " + msg_request.path);
 }
