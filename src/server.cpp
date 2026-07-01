@@ -139,7 +139,25 @@ std::string Server::generate_response_line(const Http::Version& version,
 std::pair<Http::Response_code, std::string>
 Server::generate_content_header(const std::string& path) const
 {
-    // TODO: generate_content_header
+    std::filesystem::path file_path{ path };
+
+    // If given path doesn't exist, or if it does but is a 
+    // directory instead of a file then error out
+    if (!std::filesystem::exists(file_path)
+      || std::filesystem::is_directory(file_path)) {
+        
+        return { Http::Response_code::PAGE_NOT_FOUND, "" };
+    }
+
+    auto file_size{ std::filesystem::file_size(file_path) };
+
+    std::string content_header{ 
+        "Content-Length: " + std::to_string(file_size)
+    };
+
+    return { Http::Response_code::OK, content_header };
+
+    // TODO: Content type for content header
 }
 
 
