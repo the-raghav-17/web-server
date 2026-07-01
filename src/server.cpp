@@ -175,7 +175,7 @@ std::string Server::process_path(const std::string& path) const
         processed_path += "index.html";
     }
 
-    processed_path = m_root_dir.string() + path;
+    processed_path = m_root_dir.string() + processed_path;
     return processed_path;
 }
 
