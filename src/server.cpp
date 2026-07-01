@@ -131,7 +131,6 @@ std::string Server::generate_response_line(const Http::Version& version,
     response_line += " ";
     response_line += Http::get_code_msg(response_code);
 
-    response_line += "\n";
     return response_line;
 }
 
