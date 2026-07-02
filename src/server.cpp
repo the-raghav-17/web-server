@@ -17,6 +17,8 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 
 class Logger
@@ -163,7 +165,18 @@ Server::generate_content_header(const std::string& path) const
 std::pair<Http::Response_code, std::string>
 Server::generate_content_body(const std::string& path) const
 {
-    // TODO: generate_content_body
+    std::ifstream file_obj{ path };
+    if (!file_obj.is_open()) {
+        // TODO: File not opened error handling
+    }
+
+    std::stringstream buffer{};
+    buffer << file_obj.rdbuf();
+
+    std::string file_contents{ buffer.str() };
+    log("File_content size: " + std::to_string(file_contents.size()));
+    
+    return { Http::Response_code::OK, file_contents };
 }
 
 
