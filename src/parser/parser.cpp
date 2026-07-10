@@ -1,5 +1,4 @@
 #include "parser.h"
-#include "parser_helper.h"
 #include "http.h"
 
 #include <string>
@@ -7,7 +6,7 @@
 
 Http::Request Parser::parse_request(const std::string& request_msg) const
 {
-    auto parsed_request{ Parser_helper::tokenize_string(request_msg, "\r\n") };
+    auto parsed_request{ tokenize_string(request_msg, "\r\n") };
     constexpr int REQUEST_LINE_INDEX{ 0 };
 
     Http::Request request{};
@@ -27,7 +26,7 @@ int Parser::parse_request_line(const std::string& request_line, Http::Request& r
 {
     constexpr std::size_t TOK_COUNT{ 3 };
 
-    auto parsed_request_line{ Parser_helper::tokenize_string(request_line, " ") };
+    auto parsed_request_line{ tokenize_string(request_line, " ") };
     if (parsed_request_line.size() != TOK_COUNT) {
         request.is_valid = false;
         return -1;
@@ -69,4 +68,30 @@ int Parser::parse_request_line(const std::string& request_line, Http::Request& r
 
     request.is_valid = true;
     return 0;
+}
+
+
+std::vector<std::string>
+Parser::tokenize_string(const std::string& str, const std::string& delim)
+{
+    std::vector<std::string> out{};
+    std::size_t i{ 0 };
+
+    for (auto found = str.find(delim, 0);
+        found != std::string::npos;
+        found = str.find(delim, i)) {
+
+        // We're on the delim itself, so don't add it to token
+        if (str.substr(i, delim.size()) != delim) {
+            out.emplace_back(str, i, found-i);
+        }
+
+        i = found + delim.size();
+    }
+    // If we go across the string (when delim is at end)
+    if (i < str.size()) {
+        out.emplace_back(str, i);
+    }
+
+    return out;
 }
