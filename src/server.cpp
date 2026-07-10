@@ -38,10 +38,9 @@ private:
 Logger log{ "Server" };
 
 
-// Overview of everything the server does, happens here
 void Server::start() const
 {
-    // FIX: Rewrite the try-catch block of server::start() to handle connection acceptance differently
+    // FIX: Rewrite the try-catch block of server::start() to handle connection acceptance differently (use epoll)
 
     try {
         Socket socket{ SOCK_STREAM, AF_INET, 0 };
@@ -54,44 +53,49 @@ void Server::start() const
         const std::string addr{ "http://localhost:" + port_no };
         log("Listening on " + addr);
 
-        auto [remote_socket, ip_info] = socket.accept();
-        log("Successfully connected to " + ip_info.ip_string);
+        while (1) {
+            auto [remote_socket, ip_info] = socket.accept();
+            log("Successfully connected to " + ip_info.ip_string);
 
-        handle_client(remote_socket);
+            handle_client(remote_socket);
+        }
     } catch(const Socket_error& err) {
         log("Error: " + std::string{ err.what() });
     }
 }
 
 
+// Recieves the request message, parses it, generates a response
+// and sends it
 void Server::handle_client(Socket& remote_socket) const
 {
     const std::string request_msg{ remote_socket.recv() };
 
-    log("Message recieved: ");
-    std::cout << request_msg << '\n';
+    log("Message recieved:\n" + request_msg);
 
     // TODO: client handling
     Http::Request parsed_request{ m_parser.parse_request(request_msg) };
 
     print_request_details(parsed_request);
 
-    auto response_msg{ generate_response(parsed_request) };
-    log("Response:\n" + response_msg);
+    const std::string response_msg{ generate_response(parsed_request) };
+    // log("Response:\n" + response_msg);
     remote_socket.send(response_msg);
 }
 
 
 std::string Server::generate_response(const Http::Request& request) const
 {
+    // TODO: On error, provide a preconfigured html page that describes the error
+
+    if (!request.is_valid) {
+        return generate_response_line(Http::Version::V1_0,
+                                      Http::Response_code::BAD_REQUEST);
+    }
+
     auto version{ Http::Version::V1_0 };
     auto method{ request.method };
     std::string path{ process_path(request.path) };
-
-    if (!request.is_valid) {
-        auto code{ Http::Response_code::BAD_REQUEST };
-        return generate_response_line(version, code);
-    }
 
     // Generate content header
     auto [code, content_header] = generate_content_header(path);
@@ -172,6 +176,9 @@ Server::generate_content_header(const std::string& path) const
 std::pair<Http::Response_code, std::string>
 Server::generate_content_body(const std::string& path) const
 {
+    // SEE: If there is any better way of getting the contents of a file
+    // TODO: Error handling for file not found and if provided path is valid or not
+
     std::ifstream file_obj{ path };
     if (!file_obj.is_open()) {
         // TODO: File not opened error handling
