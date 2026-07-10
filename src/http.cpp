@@ -1,4 +1,5 @@
 #include "http.h"
+#include "parser.h"
 
 #include <string>
 
@@ -57,5 +58,52 @@ std::string Http::get_code_msg(const Response_code& code)
 
         case Http::Response_code::INTERNAL_SERVER_ERR:
             return "Internal Server Error";
+    }
+}
+
+
+std::string Http::get_mime_type(const std::string& file_path)
+{
+    // Works by simply tokenizing the path based on '.' character
+    // Selects the last token as the file extension.
+    //
+    // Ex - public/src/.server/img.png
+    // Tokenized into: ["public/src/", "server/img", "png"]
+    // png will be the extension.
+
+    auto tokens{ Parser::tokenize_string(file_path, ".") };
+    auto extension{ tokens.back() };
+
+    // Textual files
+    if (extension == "css") {
+        return "text/css";
+    }
+    else if (extension == "html") {
+        return "text/html";
+    }
+    else if (extension == "txt") {
+        return "text/plain";
+    }
+    else if (extension == "js") {
+        return "text/javascript";
+    }
+
+    // Image files
+    else if (extension == "jpg" || extension == "jpeg") {
+        return "image/jpeg";
+    }
+    else if (extension == "png") {
+        return "image/png";
+    }
+    else if (extension == "svg") {
+        return "image/svg+xml";
+    }
+    else if (extension == "webp") {
+        return "image/webp";
+    }
+
+    // Unknown type
+    else {
+        return "application/octet-stream";
     }
 }
