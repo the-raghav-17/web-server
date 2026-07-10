@@ -114,7 +114,10 @@ std::string Server::generate_response(const Http::Request& request) const
     auto response_line{ generate_response_line(version, response_code) };
 
     std::string response{
-        response_line + "\n" + content_header + "\n" + "\n" + content_body
+        response_line + "\n"
+      + content_header + "\n"
+      + "\n"
+      + content_body
     };
 
     return response;
@@ -140,6 +143,7 @@ std::string Server::generate_response_line(const Http::Version& version,
 std::pair<Http::Response_code, std::string>
 Server::generate_content_header(const std::string& path) const
 {
+
     std::filesystem::path file_path{ path };
 
     // If given path doesn't exist, or if it does but is a 
@@ -150,10 +154,13 @@ Server::generate_content_header(const std::string& path) const
         return { Http::Response_code::PAGE_NOT_FOUND, "" };
     }
 
-    auto file_size{ std::filesystem::file_size(file_path) };
+    auto content_length{ std::filesystem::file_size(file_path) };
+    auto content_type{ Http::get_mime_type(path) };
+    // TODO: Update content header for file type
 
     std::string content_header{ 
-        "Content-Length: " + std::to_string(file_size)
+        "Content-Length: " + std::to_string(content_length) + '\n'
+      + "Content-Type: "   + content_type
     };
 
     return { Http::Response_code::OK, content_header };
