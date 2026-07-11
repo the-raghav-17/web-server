@@ -1,3 +1,9 @@
+/*
+ * SPDX-License-Identifier: GNU GPLv3
+ * Copyright (c) 2026 Raghav Sharma
+ * GitHub: https://github.com/the-raghav-17
+ */
+
 #ifndef HTTP_H_
 #define HTTP_H_
 
@@ -7,8 +13,6 @@
 
 namespace Http
 {
-    const static std::string VERSION{ "1.0" };
-
     enum class Method
     {
         GET, HEAD,
@@ -40,8 +44,12 @@ namespace Http
     };
 
     std::string get_http_version_string(const Version& version);
+
     std::string get_code_string(const Response_code& code);
     std::string get_code_msg(const Response_code& code);
+
+    // Provides a content body for the given code to be displayed as a page
+    std::pair<std::string, std::string> get_code_page(const Response_code& code);
     std::string get_mime_type(const std::string& file_path);
 };
 

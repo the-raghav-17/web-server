@@ -100,7 +100,13 @@ std::string Server::generate_response(const Http::Request& request) const
     // Generate content header
     auto [code, content_header] = generate_content_header(path);
     if (code != Http::Response_code::OK) {
-        return generate_response_line(version, code);
+        const auto response_line { generate_response_line(version, code) };
+        const auto [header, content]{ Http::get_code_page(code) };
+
+        return response_line + "\n"
+             + header + "\n"
+             + "\n"
+             + content;
     }
 
     // Generate content body (only if method is GET)
@@ -108,7 +114,13 @@ std::string Server::generate_response(const Http::Request& request) const
     if (method == Http::Method::GET) {
         auto [code, body] = generate_content_body(path);
         if (code != Http::Response_code::OK) {
-            return generate_response_line(version, code);
+            const auto response_line { generate_response_line(version, code) };
+            const auto [header, content]{ Http::get_code_page(code) };
+
+            return response_line + "\n"
+                 + header + "\n"
+                 + "\n"
+                 + content;
         }
         content_body += body;
     }
