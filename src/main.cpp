@@ -1,7 +1,7 @@
 /*
+ * SPDX-License-Identifier: GNU GPLv3
  * Copyright (c) 2026 Raghav Sharma
- * License: GNU GPLv3
- * GitHub: github.com/the-raghav-17
+ * GitHub: https://github.com/the-raghav-17
  */
 
 /*
@@ -20,20 +20,19 @@
 
 int main(int argc, char* argv[])
 {
-    // FIX: Giving root path argument
+    std::string root_path{ "" };
 
-    const std::string root_path{ "./public/" };
-    //
-    // if (argc > 2) {
-    //     std::cerr << "Usage: " << argv[0] << " [root-path]\n";
-    //     return 1;
-    // }
-    // else if (argc == 2) {
-    //     root_path += std::string(argv[1]);
-    // }
-    // else {
-    //     root_path += std::string("./public/");
-    // }
+    if (argc > 2) {
+        std::cerr << "Usage: " << argv[0] << " [root-path]\n";
+        return 1;
+    }
+    else if (argc == 2) {
+        root_path += std::string(argv[1]);
+    }
+    else {
+        // Default root path
+        root_path += std::string("./public/");
+    }
 
     try {
         Server server{ root_path };
