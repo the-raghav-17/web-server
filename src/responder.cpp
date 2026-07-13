@@ -16,7 +16,8 @@ Responder::Responder(const std::string& request_msg,
 }
 
 
-std::string Responder::generate_response()
+std::string
+Responder::generate_response()
 {
     // If we've already generated a response
     if (!m_response.empty()) {
@@ -59,10 +60,8 @@ std::string Responder::generate_response()
     };
 
     // Compose the complete response message
-    m_response = response_line   + "\n"
-               + response_header + "\n"
-               + "\n"
-               + "response_body";
+    m_response = compose_response_msg(response_line, response_header,
+                                    response_body);
 
     return m_response;
 };
@@ -106,6 +105,18 @@ Responder::generate_response_header(const std::string& resource_path)
     };
 
     return { Http::Response_code::OK, response_header };
+}
+
+
+[[nodiscard]] std::string
+compose_response_msg(const std::string& response_line,
+                     const std::string& response_header,
+                     const std::string& response_body) const
+{
+    return (response_line    + "\n"
+          + response_header + "\n"
+          + "\n"
+          + response_body;)
 }
 
 

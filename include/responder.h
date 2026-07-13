@@ -22,33 +22,36 @@ public:
      * and the name of the root directory where all the
      * HTTP content is stored
      */
-    Responder(const std::string& request_msg, const std::string& root_path="public") noexcept;
+    Responder(const std::string& request_msg,
+            const std::string& root_path="public") noexcept;
 
     /**
      * Generates a string which to be sent back to the client
      * which sent the request message
      */
-    std::string generate_response();
+    [[nodiscard]] std::string
+        generate_response();
 
     /**
      * Get the parsed request message.
      * Returns the struct which has all the details of
      * the parsed request message.
      */
-    Http::Request get_request_details();
+    [[nodiscard]] Http::Request
+        get_request_details() const;
 
 private:
     /**
      * The root directory where all the 
      * HTTP content is stored
      */
-    std::string   m_root_path{};
+    std::string m_root_path{};
 
     /**
      * The original request message sent
      * by the client to be parsed.
      */
-    std::string   m_request_msg{};
+    std::string m_request_msg{};
 
     /**
      * The parsed request message
@@ -59,25 +62,32 @@ private:
      * The response message generated
      * by the responder
      */
-    std::string   m_response_msg{};
+    std::string m_response_msg{};
 
     // ----- Methods -----//
 
-    std::string generate_response_line(const Http::Version version,
-                                const Http::Response_code response_code) const;
+    [[nodiscard]] std::string
+        generate_response_line(const Http::Version version,
+                            const Http::Response_code response_code) const;
 
-    std::pair<Http::Response_code, std::string>
+    [[nodiscard]] std::pair<Http::Response_code, std::string>
         generate_response_header(const std::string& resource_path) const;
 
-    std::pair<Http::Response_code, std::string>
+    [[nodiscard]] std::pair<Http::Response_code, std::string>
         generate_response_body(const std::string& resource_path) const;
+
+    [[nodiscard]] std::string
+        compose_response_msg(const std::string& response_line,
+                             const std::string& response_header,
+                             const std::string& response_body) const;
 
     /**
      * Modifies the path of resource requested
      * by adding the root path string in front
      * and making any other changes required
      */
-    std::string process_path(const std::string& path);
+    [[nodiscard]] std::string 
+        process_path(const std::string& path) const;
 };
 
 
