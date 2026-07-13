@@ -1,3 +1,9 @@
+/*
+ * SPDX-License-Identifier: GNU GPLv3
+ * Copyright (c) 2026 Raghav Sharma
+ * GitHub: https://github.com/the-raghav-17
+ */
+
 #include "parser.h"
 #include "http.h"
 
@@ -7,18 +13,15 @@
 Http::Request Parser::parse_request(const std::string& request_msg)
 {
     Http::Request request{};
-    request.is_valid = false;
 
     // Tokenize the request message into different lines
-    auto request_parts{ tokenize_string(request_msg, "\r\n") };
+    const auto request_parts{ tokenize_string(request_msg, "\r\n") };
 
     // Request line comes first
     const std::string& request_line{ request_parts.front() };
     if (parse_request_line(request_line, request) == -1) {
         return request;
     }
-
-    // TODO: Parsing headers and content
 
     return request;
 }
@@ -41,10 +44,10 @@ int Parser::parse_request_line(const std::string& request_line, Http::Request& r
 
     // Get the method type
     const auto& method{ request_line_parts.at(METHOD_INDEX) };
-    if (method == std::string{ "GET" }) {
+    if (method == "GET") {
         request.method = Http::Method::GET;
     }
-    else if (method == std::string{ "HEAD" }) {
+    else if (method == "HEAD") {
         request.method = Http::Method::HEAD;
     }
     else {
