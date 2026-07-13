@@ -54,7 +54,7 @@ Responder::generate_response()
         = generate_response_header(resource_path);
 
     if (response_code != Http::Response_code::OK) {
-        m_response_msg = get_error_page(Http::Response_code::BAD_REQUEST,
+        m_response_msg = get_error_page(response_code,
                                 response_version);
         return m_response_msg;
     }
@@ -67,7 +67,7 @@ Responder::generate_response()
             = generate_response_body(resource_path);
 
         if (response_code != Http::Response_code::OK) {
-            m_response_msg = get_error_page(Http::Response_code::BAD_REQUEST,
+            m_response_msg = get_error_page(response_code,
                                     response_version);
             return m_response_msg;
         }
