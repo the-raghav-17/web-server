@@ -43,13 +43,11 @@ namespace Http
         std::string path;
     };
 
-    std::string get_http_version_string(const Version& version);
+    std::string get_version_string(const Version& version);
 
     std::string get_code_string(const Response_code& code);
     std::string get_code_msg(const Response_code& code);
 
-    // Provides a content body for the given code to be displayed as a page
-    std::pair<std::string, std::string> get_code_page(const Response_code& code);
     std::string get_mime_type(const std::string& file_path);
 };
 

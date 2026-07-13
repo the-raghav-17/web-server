@@ -1,7 +1,7 @@
 /*
+ * SPDX-License-Identifier: GNU GPLv3
  * Copyright (c) 2026 Raghav Sharma
- * License: GNU GPLv3
- * GitHub: github.com/the-raghav-17
+ * GitHub: https://github.com/the-raghav-17
  */
 
 /*
@@ -34,11 +34,11 @@ public:
 class Server
 {
 public:
-    // TODO: Add server constructor that enables signal handling andd initialized invariants
     Server(const std::string& path):
-        m_root_dir{ path }
+        m_root_path{ path }
     {
-        if (!std::filesystem::exists(m_root_dir)) {
+        // Check whether the path exists or not
+        if (!std::filesystem::exists(std::filesystem::path{m_root_path})) {
             throw Server_error{ path + ": No such path exists" };
         }
     }
@@ -46,21 +46,10 @@ public:
     void start() const;
 
 private:
-    std::filesystem::path m_root_dir{};
-    Parser                m_parser{};
+    std::string m_root_path{};
 
     void handle_client(Socket& remote_socket) const;
     void print_request_details(const Http::Request& msg_request) const;
-
-    std::string generate_response(const Http::Request& request) const;
-
-    std::string generate_response_line(const Http::Version& version,
-                                      const Http::Response_code& response_code) const;
-
-    std::pair<Http::Response_code, std::string> generate_content_header(const std::string& path) const;
-    std::pair<Http::Response_code, std::string> generate_content_body(const std::string& path) const;
-
-    std::string process_path(const std::string& path) const;
 };
 
 

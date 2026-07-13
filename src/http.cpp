@@ -10,7 +10,7 @@
 #include <string>
 
 
-std::string Http::get_http_version_string(const Http::Version& version)
+std::string Http::get_version_string(const Http::Version& version)
 {
     switch (version) {
         case Http::Version::V1_0:
@@ -112,33 +112,4 @@ std::string Http::get_mime_type(const std::string& file_path)
     else {
         return "application/octet-stream";
     }
-}
-
-
-std::pair<std::string, std::string>
-Http::get_code_page(const Http::Response_code& code)
-{
-    auto code_string{ get_code_string(code) };
-    auto code_msg{ get_code_msg(code) };
-
-    std::string page{
-        "<html>"
-            "<head>"
-                "<meta charset=\"UTF-8\">"
-                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
-                "<title>" + code_msg + "</title>"
-            "</head>"
-
-            "<body>"
-                "<center><h1>" + code_string + " " + code_msg + "</h1></center>"
-            "</body>"
-        "</html>"
-    };
-
-    std::string header{};
-    header += "Content-Type: text/html";
-    header += "\n";
-    header += "Content-Length: " + std::to_string(page.size());
-
-    return { header, page };
 }
