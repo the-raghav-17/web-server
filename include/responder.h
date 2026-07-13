@@ -4,8 +4,21 @@
  * GitHub: https://github.com/the-raghav-17
  */
 
+/**
+ * responder.h
+ *
+ * Declaration of the responder class.
+ */
+
+
 #ifndef RESPONDER_H_
 #define RESPONDER_H_
+
+
+#include "http.h"
+
+#include <string>
+#include <utility>
 
 
 /**
@@ -23,7 +36,7 @@ public:
      * HTTP content is stored
      */
     Responder(const std::string& request_msg,
-            const std::string& root_path="public") noexcept;
+            const std::string& root_path) noexcept;
 
     /**
      * Generates a string which to be sent back to the client
@@ -38,7 +51,9 @@ public:
      * the parsed request message.
      */
     [[nodiscard]] Http::Request
-        get_request_details() const;
+        get_parsed_request() const {
+            return m_request;
+        }
 
 private:
     /**
@@ -66,20 +81,57 @@ private:
 
     // ----- Methods -----//
 
+    /**
+     * Generates and returns the response line string.
+     *
+     * Takes the HTTP version and the response
+     * code of the response.
+     */
     [[nodiscard]] std::string
         generate_response_line(const Http::Version version,
                             const Http::Response_code response_code) const;
 
+    /**
+     * Generates response header for a particular
+     * resource requested.
+     * Takes the path to resource as parameter.
+     * Returns a pair of response code and the actual
+     * response header string.
+     * On success, response code is set to OK. Otherwise,
+     * to any other value to represent the error.
+     */
     [[nodiscard]] std::pair<Http::Response_code, std::string>
         generate_response_header(const std::string& resource_path) const;
 
+    /**
+     * Generates response body for a particular
+     * resource requested.
+     * Takes the path to resource as parameter.
+     * Returns a pair of response code and the actual
+     * response body string.
+     * On success, response code is set to OK. Otherwise,
+     * to any other value to represent the error.
+     */
     [[nodiscard]] std::pair<Http::Response_code, std::string>
         generate_response_body(const std::string& resource_path) const;
 
+    /*
+     * Compose a full HTTP response message.
+     * Given the response line, response header
+     * and response body, compose a full HTTP response
+     * message.
+     * Just adds necessary new-lines and doesn't perform
+     * any kind of syntactic checks on the provided strings
+     */
     [[nodiscard]] std::string
         compose_response_msg(const std::string& response_line,
                              const std::string& response_header,
                              const std::string& response_body) const;
+
+    // TODO: Add comment for get_error_page
+    [[nodiscard]] std::string
+        get_error_page(const Http::Response_code response_code,
+                                const Http::Version http_version) const;
 
     /**
      * Modifies the path of resource requested
