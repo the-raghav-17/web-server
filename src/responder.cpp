@@ -22,10 +22,11 @@
 
 
 Responder::Responder(const std::string& request_msg, 
-                    const std::string& root_path) noexcept
+                    const std::string& root_path)
     :m_root_path{ root_path },
      m_request_msg{ request_msg }
 {
+    // Parse and store the request
      m_request = Parser::parse_request(request_msg);
 }
 
@@ -33,29 +34,31 @@ Responder::Responder(const std::string& request_msg,
 std::string
 Responder::get_response()
 {
-    // If we've already generated a response
+    // If response is already cached
     if (!m_response_msg.empty()) {
         return m_response_msg;
     }
 
     constexpr auto response_version{ Http::Version::V1_1 };
 
+    // If the http request is not valid, send an error page
     if (!m_request.is_valid) {
         m_response_msg = get_error_page(Http::Response_code::BAD_REQUEST,
-                                response_version);
+                                        response_version);
         return m_response_msg;
     }
 
-    const auto        request_method{ m_request.method };
-    const std::string resource_path{ process_path(m_request.path) };
+    const auto         request_method{ m_request.method };
+    const std::string& resource_path{ process_path(m_request.path) };
 
     // Generate the response header
     const auto [response_code, response_header]
         = get_response_header(resource_path);
 
+    // If there was some problem in generating the header
     if (response_code != Http::Response_code::OK) {
         m_response_msg = get_error_page(response_code,
-                                response_version);
+                                        response_version);
         return m_response_msg;
     }
 
@@ -66,6 +69,7 @@ Responder::get_response()
         const auto [response_code, body] 
             = get_response_body(resource_path);
 
+        // If there was some problem in generating the body
         if (response_code != Http::Response_code::OK) {
             m_response_msg = get_error_page(response_code,
                                     response_version);
@@ -80,7 +84,7 @@ Responder::get_response()
 
     // Compose the complete response message
     m_response_msg = compose_response_msg(response_line, response_header,
-                                    response_body);
+                                          response_body);
 
     return m_response_msg;
 };
@@ -116,8 +120,8 @@ Responder::get_response_header(const std::string& resource_path) const
         return { Http::Response_code::PAGE_NOT_FOUND, "" };
     }
 
-    auto content_length{ std::filesystem::file_size(path) };
-    auto content_type{ Http::get_mime_type(resource_path) };
+    const auto content_length{ std::filesystem::file_size(path) };
+    const auto content_type{ Http::get_mime_type(resource_path) };
 
     std::string response_header{ 
         "Content-Length: " + std::to_string(content_length) + '\n'
@@ -131,12 +135,12 @@ Responder::get_response_header(const std::string& resource_path) const
 std::pair<Http::Response_code, std::string>
 Responder::get_response_body(const std::string& resource_path) const
 {
+    // FIX: Logic to reading whole file in generating response body
     std::ifstream resource_stream{ resource_path };
     if (!resource_stream.is_open()) {
         // TODO: File not opened error handling
     }
 
-    // FIX: Logic to reading whole file
     std::stringstream buffer{};
     buffer << resource_stream.rdbuf();
 
@@ -147,10 +151,10 @@ Responder::get_response_body(const std::string& resource_path) const
 
 std::string
 Responder::compose_response_msg(const std::string& response_line,
-                             const std::string& response_header,
-                             const std::string& response_body) const
+                                const std::string& response_header,
+                                const std::string& response_body) const
 {
-    return response_line    + "\n"
+    return  response_line   + "\n"
           + response_header + "\n"
           + "\n"
           + response_body;

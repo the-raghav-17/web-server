@@ -7,7 +7,10 @@
 /**
  * responder.h
  *
- * Declaration of the responder class.
+ * Declaration of the responder class which
+ * is responsible for providing response
+ * facilities like generating a response to
+ * an HTTP request
  */
 
 
@@ -36,11 +39,11 @@ public:
      * HTTP content is stored
      */
     Responder(const std::string& request_msg,
-            const std::string& root_path) noexcept;
+            const std::string& root_path);
 
     /**
-     * Generates a string which to be sent back to the client
-     * which sent the request message
+     * Generates a response message that can be 
+     * sent back to the client
      */
     [[nodiscard]] std::string
         get_response();
@@ -51,7 +54,7 @@ public:
      * the parsed request message.
      */
     [[nodiscard]] Http::Request
-        get_parsed_request() const {
+        get_parsed_request() const noexcept {
             return m_request;
         }
 
@@ -64,7 +67,7 @@ private:
 
     /**
      * The original request message sent
-     * by the client to be parsed.
+     * by the client
      */
     std::string m_request_msg{};
 
