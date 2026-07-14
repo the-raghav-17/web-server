@@ -4,6 +4,15 @@
  * GitHub: https://github.com/the-raghav-17
  */
 
+/*
+ * parser.h
+ *
+ * Declaration of various parsing utilities
+ * like request parsing, request line parsing
+ * and string tokenization
+ */
+
+
 #ifndef PARSER_H_
 #define PARSER_H_
 
@@ -20,8 +29,6 @@
  */
 namespace Parser
 {
-    // CONT: See if these functions return any kind of exceptions
-
     /**
      * Parser function to parse complete HTTP requests.
      * Calls other helper functions to parse request

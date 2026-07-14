@@ -8,9 +8,11 @@
 #include "http.h"
 
 #include <string>
+#include <vector>
 
 
-Http::Request Parser::parse_request(const std::string& request_msg)
+Http::Request
+Parser::parse_request(const std::string& request_msg)
 {
     Http::Request request{};
 
@@ -27,8 +29,12 @@ Http::Request Parser::parse_request(const std::string& request_msg)
 }
 
 
-int Parser::parse_request_line(const std::string& request_line, Http::Request& request)
+int
+Parser::parse_request_line(const std::string& request_line,
+                            Http::Request& request)
 {
+    // Request line has 3 parts:
+    // Method, resource path and HTTP version
     constexpr std::size_t PARTS_COUNT{ 3 };
 
     // Tokenize the request line into parts
@@ -44,6 +50,7 @@ int Parser::parse_request_line(const std::string& request_line, Http::Request& r
 
     // Get the method type
     const auto& method{ request_line_parts.at(METHOD_INDEX) };
+    // TODO: Add a helper function to convert method string to method type
     if (method == "GET") {
         request.method = Http::Method::GET;
     }
@@ -60,6 +67,7 @@ int Parser::parse_request_line(const std::string& request_line, Http::Request& r
 
     // Get the http version
     const auto& version{ request_line_parts.at(VERSION_INDEX) };
+    // TODO: Add a helper function to convert version string to version type
     if (version == "HTTP/1.0") {
         request.version = Http::Version::V1_0;
     }
