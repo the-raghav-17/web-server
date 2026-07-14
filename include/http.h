@@ -4,6 +4,15 @@
  * GitHub: https://github.com/the-raghav-17
  */
 
+/*
+ * http.h
+ *
+ * Declaration of HTTP utilities
+ * like methods, version, response code and
+ * helper functions
+ */
+
+
 #ifndef HTTP_H_
 #define HTTP_H_
 
@@ -13,6 +22,8 @@
 
 namespace Http
 {
+    // ----- Types ----- //
+
     enum class Method
     {
         GET, HEAD,
@@ -43,12 +54,42 @@ namespace Http
         std::string path;
     };
 
-    std::string get_version_string(const Version& version);
+    // ----- Functions ----- //
 
-    std::string get_code_string(const Response_code& code);
-    std::string get_code_msg(const Response_code& code);
+    /**
+     * Takes Http::Version type and returns
+     * the version string.
+     * Like: Http::Version::V1_1 -> "1.1"
+     */
+    [[nodiscard]] std::string 
+        get_version_string(const Version& version) noexcept;
 
-    std::string get_mime_type(const std::string& file_path);
+    /**
+     * Takes Http::Response_code type and returns
+     * the code string.
+     * Like: Http::Response_code::OK -> "OK"
+     */
+    [[nodiscard]] std::string 
+        get_code_string(const Response_code& code) noexcept;
+
+    /**
+     * Takes Http::Response_code type and
+     * returns the message associated with 
+     * the code.
+     * Like: Http::Response_code::BAD_REQUEST -> "Bad Request"
+     */
+    [[nodiscard]] std::string
+        get_code_msg(const Response_code& code) noexcept;
+
+    /**
+     * Takes the path to a file and returns the
+     * MIME string associated with file type.
+     * Doesn't do any kind of check on whether
+     * the file exists or not.
+     * For files of unknown type, returns "application/octet-stream"
+     */
+    [[nodiscard]] std::string
+        get_mime_type(const std::string& file_path);
 };
 
 

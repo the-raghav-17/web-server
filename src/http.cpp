@@ -4,71 +4,81 @@
  * GitHub: https://github.com/the-raghav-17
  */
 
+/*
+ * http.cpp
+ *
+ * Definitions of functions in the namespace Http
+ */
+
 #include "http.h"
 #include "parser.h"
 
 #include <string>
 
 
-std::string Http::get_version_string(const Http::Version& version)
+std::string
+Http::get_version_string(const Http::Version& version) noexcept
 {
     switch (version) {
-        case Http::Version::V1_0:
+        case Version::V1_0:
             return "1.0";
 
-        case Http::Version::V1_1:
+        case Version::V1_1:
             return "1.1";
     }
 }
 
-std::string Http::get_code_string(const Http::Response_code& code)
+std::string
+Http::get_code_string(const Http::Response_code& code) noexcept
 {
     switch (code) {
-        case Http::Response_code::OK:
+        case Response_code::OK:
             return "200";
 
-        case Http::Response_code::BAD_REQUEST:
+        case Response_code::BAD_REQUEST:
             return "400";
 
-        case Http::Response_code::UNAUTHORIZED:
+        case Response_code::UNAUTHORIZED:
             return "401";
 
-        case Http::Response_code::FORBIDDEN:
+        case Response_code::FORBIDDEN:
             return "403";
 
-        case Http::Response_code::PAGE_NOT_FOUND:
+        case Response_code::PAGE_NOT_FOUND:
             return "404";
 
-        case Http::Response_code::INTERNAL_SERVER_ERR:
+        case Response_code::INTERNAL_SERVER_ERR:
             return "500";
     }
 }
 
-std::string Http::get_code_msg(const Response_code& code)
+std::string
+Http::get_code_msg(const Response_code& code) noexcept
 {
     switch (code) {
-        case Http::Response_code::OK:
+        case Response_code::OK:
             return "OK";
 
-        case Http::Response_code::BAD_REQUEST:
+        case Response_code::BAD_REQUEST:
             return "Bad Request";
 
-        case Http::Response_code::UNAUTHORIZED:
+        case Response_code::UNAUTHORIZED:
             return "Unauthorized";
 
-        case Http::Response_code::FORBIDDEN:
+        case Response_code::FORBIDDEN:
             return "Forbidden";
 
-        case Http::Response_code::PAGE_NOT_FOUND:
+        case Response_code::PAGE_NOT_FOUND:
             return "Page Not Found";
 
-        case Http::Response_code::INTERNAL_SERVER_ERR:
+        case Response_code::INTERNAL_SERVER_ERR:
             return "Internal Server Error";
     }
 }
 
 
-std::string Http::get_mime_type(const std::string& file_path)
+std::string
+Http::get_mime_type(const std::string& file_path)
 {
     // Works by simply tokenizing the path based on '.' character
     // Selects the last token as the file extension.
