@@ -31,7 +31,7 @@ Responder::Responder(const std::string& request_msg,
 
 
 std::string
-Responder::generate_response()
+Responder::get_response()
 {
     // If we've already generated a response
     if (!m_response_msg.empty()) {
@@ -51,7 +51,7 @@ Responder::generate_response()
 
     // Generate the response header
     const auto [response_code, response_header]
-        = generate_response_header(resource_path);
+        = get_response_header(resource_path);
 
     if (response_code != Http::Response_code::OK) {
         m_response_msg = get_error_page(response_code,
@@ -64,7 +64,7 @@ Responder::generate_response()
     std::string response_body{};
     if (request_method == Http::Method::GET) {
         const auto [response_code, body] 
-            = generate_response_body(resource_path);
+            = get_response_body(resource_path);
 
         if (response_code != Http::Response_code::OK) {
             m_response_msg = get_error_page(response_code,
@@ -75,7 +75,7 @@ Responder::generate_response()
     }
 
     // Get the response line
-    const auto response_line{ generate_response_line(response_version, 
+    const auto response_line{ get_response_line(response_version, 
                                         Http::Response_code::OK) };
 
     // Compose the complete response message
@@ -87,7 +87,7 @@ Responder::generate_response()
 
 
 std::string
-Responder::generate_response_line(const Http::Version version,
+Responder::get_response_line(const Http::Version version,
                             const Http::Response_code response_code) const
 {
     std::string response_line{ "HTTP/" };
@@ -104,7 +104,7 @@ Responder::generate_response_line(const Http::Version version,
 
 
 std::pair<Http::Response_code, std::string>
-Responder::generate_response_header(const std::string& resource_path) const
+Responder::get_response_header(const std::string& resource_path) const
 {
     std::filesystem::path path{ resource_path };
 
@@ -129,7 +129,7 @@ Responder::generate_response_header(const std::string& resource_path) const
 
 
 std::pair<Http::Response_code, std::string>
-Responder::generate_response_body(const std::string& resource_path) const
+Responder::get_response_body(const std::string& resource_path) const
 {
     std::ifstream resource_stream{ resource_path };
     if (!resource_stream.is_open()) {
@@ -164,7 +164,7 @@ Responder::get_error_page(const Http::Response_code response_code,
     // Generate response line, response body and response header based
     // on the error occured and simply return the composed page
 
-    const auto response_line{ generate_response_line(version, response_code) };
+    const auto response_line{ get_response_line(version, response_code) };
 
     const auto code_str{ Http::get_code_string(response_code) };
     const auto code_msg{ Http::get_code_msg(response_code) };

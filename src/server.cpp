@@ -41,8 +41,6 @@ Logger log{ "Server" };
 
 void Server::start() const
 {
-    // FIX: Rewrite the try-catch block of server::start() to handle connection acceptance differently (use epoll)
-
     try {
         Socket socket{ SOCK_STREAM, AF_INET, 0 };
     
@@ -75,7 +73,7 @@ void Server::handle_client(Socket& remote_socket) const
     log("Message recieved:\n" + request_msg);
 
     Responder responder{ request_msg, m_root_path };
-    const auto response_msg{ responder.generate_response() };
+    const auto response_msg{ responder.get_response() };
     remote_socket.send(response_msg);
 }
 

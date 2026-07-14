@@ -43,7 +43,7 @@ public:
      * which sent the request message
      */
     [[nodiscard]] std::string
-        generate_response();
+        get_response();
 
     /**
      * Get the parsed request message.
@@ -88,8 +88,8 @@ private:
      * code of the response.
      */
     [[nodiscard]] std::string
-        generate_response_line(const Http::Version version,
-                            const Http::Response_code response_code) const;
+        get_response_line(const Http::Version version,
+                          const Http::Response_code response_code) const;
 
     /**
      * Generates response header for a particular
@@ -101,7 +101,7 @@ private:
      * to any other value to represent the error.
      */
     [[nodiscard]] std::pair<Http::Response_code, std::string>
-        generate_response_header(const std::string& resource_path) const;
+        get_response_header(const std::string& resource_path) const;
 
     /**
      * Generates response body for a particular
@@ -113,7 +113,7 @@ private:
      * to any other value to represent the error.
      */
     [[nodiscard]] std::pair<Http::Response_code, std::string>
-        generate_response_body(const std::string& resource_path) const;
+        get_response_body(const std::string& resource_path) const;
 
     /*
      * Compose a full HTTP response message.
