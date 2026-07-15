@@ -18,6 +18,7 @@
 
 
 #include <string>
+#include <optional>
 
 
 namespace Http
@@ -55,6 +56,22 @@ namespace Http
     };
 
     // ----- Functions ----- //
+
+    /** FIX: Improve this comment
+     * Takes a string, and returns the HTTP
+     * method from it. Returns std::nullopt
+     * if string isn't matched with any methods.
+     */
+    [[nodiscard]] std::optional<Http::Method>
+        get_method_from_str(const std::string& method_str) noexcept;
+
+    /** FIX: Improve this comment
+     * Takes a string, and returns the HTTP
+     * version from it. Returns std::nullopt
+     * if string isn't matched with any version.
+     */
+    [[nodiscard]] std::optional<Http::Version>
+        get_version_from_str(const std::string& version_str) noexcept;
 
     /**
      * Takes Http::Version type and returns

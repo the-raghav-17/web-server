@@ -14,6 +14,39 @@
 #include "parser.h"
 
 #include <string>
+#include <optional>
+
+
+std::optional<Http::Method>
+Http::get_method_from_str(const std::string& method_str) noexcept
+{
+    if (method_str == "GET") {
+        return Http::Method::GET;
+    }
+    else if (method_str == "HEAD") {
+        return Http::Method::HEAD;
+    }
+    else {
+        return {};
+    }
+}
+
+
+std::optional<Http::Version>
+Http::get_version_from_str(const std::string& version_str) noexcept
+{
+    if (version_str == "HTTP/1.0"
+     || version_str == "1.0") {
+        return Http::Version::V1_0;
+    }
+    else if (version_str == "HTTP/1.1"
+          || version_str == "1.1") {
+        return Http::Version::V1_1;
+    }
+    else {
+        return {};
+    }
+}
 
 
 std::string
