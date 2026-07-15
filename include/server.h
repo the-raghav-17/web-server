@@ -8,6 +8,9 @@
  * server.h
  *
  * Declaration of server class.
+ * The main class that combines all
+ * the helper modules to create a 
+ * functioning server.
  */
 
 
@@ -17,11 +20,14 @@
 
 #include "socket.h"
 #include "http.h"
-#include "parser.h"
 
 #include <filesystem>
 
 
+/**
+ * Server_error is the exception class used
+ * by the server
+ */
 class Server_error : public std::runtime_error
 {
 public:
@@ -31,9 +37,21 @@ public:
 };
 
 
+/**
+ * Server class is responsible for connecting with clients,
+ * parsing their requests and then providing with a valid
+ * response.
+ */
 class Server
 {
 public:
+    /**
+     * Server consturctor takes a path string
+     * to directory where all HTTP content is
+     * stored.
+     * Throws an exception if no such path 
+     * exists.
+     */
     Server(const std::string& path):
         m_root_path{ path }
     {
@@ -43,13 +61,38 @@ public:
         }
     }
 
-    void start() const;
+    /**
+     * Method to start an initialized server.
+     * Will setup necessary network services
+     * and in a loop, accept client requests,
+     * parse them and provide a reply.
+     */
+    void
+      start() const;
 
 private:
-    std::string m_root_path{};
+    /**
+     * Path string to root of the directory
+     * where all HTTP content is stored
+     */
+    std::string
+        m_root_path{};
 
-    void handle_client(Socket& remote_socket) const;
-    void print_request_details(const Http::Request& msg_request) const;
+    // ----- Methods -----//
+
+    /**
+     * Takes a socket to remote client, parses
+     * their requests and provides a reply.
+     */
+    void
+      handle_client(Socket& remote_socket) const;
+
+    /**
+     * Helper, to be removed
+     * TODO: Remove request details printer
+     */
+    void
+      print_request_details(const Http::Request& msg_request) const;
 };
 
 

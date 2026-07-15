@@ -13,13 +13,10 @@
 
 #include "server.h"
 #include "socket.h"
-#include "parser.h"
 #include "responder.h"
 
 #include <string>
 #include <iostream>
-#include <fstream>
-#include <sstream>
 
 
 class Logger
@@ -39,7 +36,8 @@ private:
 Logger log{ "Server" };
 
 
-void Server::start() const
+void
+Server::start() const
 {
     try {
         Socket socket{ SOCK_STREAM, AF_INET, 0 };
@@ -66,7 +64,8 @@ void Server::start() const
 
 // Recieves the request message, parses it, generates a response
 // and sends it
-void Server::handle_client(Socket& remote_socket) const
+void
+Server::handle_client(Socket& remote_socket) const
 {
     const std::string request_msg{ remote_socket.recv() };
 
@@ -78,7 +77,8 @@ void Server::handle_client(Socket& remote_socket) const
 }
 
 
-void Server::print_request_details(const Http::Request& msg_request) const
+void
+Server::print_request_details(const Http::Request& msg_request) const
 {
     using namespace Http;
 
