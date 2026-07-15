@@ -48,36 +48,26 @@ Parser::parse_request_line(const std::string& request_line,
     constexpr std::size_t PATH_INDEX{ 1 };
     constexpr std::size_t VERSION_INDEX{ 2 };
 
-    // Get the method type
-    const auto& method{ request_line_parts.at(METHOD_INDEX) };
-    // TODO: Add a helper function to convert method string to method type
-    if (method == "GET") {
-        request.method = Http::Method::GET;
-    }
-    else if (method == "HEAD") {
-        request.method = Http::Method::HEAD;
-    }
-    else {
+    // ----- Get the method type ----- //
+    const auto method = 
+        Http::get_method_from_str(request_line_parts.at(METHOD_INDEX));
+    if (!method) {
         request.is_valid = false;
         return -1;
     }
+    request.method = *method;
 
-    // Get the resource path
+    // ----- Get the resource path ----- //
     request.path = std::move(request_line_parts.at(PATH_INDEX));
 
-    // Get the http version
-    const auto& version{ request_line_parts.at(VERSION_INDEX) };
-    // TODO: Add a helper function to convert version string to version type
-    if (version == "HTTP/1.0") {
-        request.version = Http::Version::V1_0;
-    }
-    else if (version == "HTTP/1.1") {
-        request.version = Http::Version::V1_1;
-    }
-    else {
+    // ----- Get the http version ----- //
+    const auto version =
+        Http::get_version_from_str(request_line_parts.at(VERSION_INDEX));
+    if (!version) {
         request.is_valid = false;
         return -1;
     }
+    request.version = *version;
 
     request.is_valid = true;
     return 0;
