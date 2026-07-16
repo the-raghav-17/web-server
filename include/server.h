@@ -45,13 +45,21 @@ public:
 class Server
 {
 public:
-    /**
-     * Default config settings for the server
-     */
-    static const     std::string DEFAULT_ROOT_PATH{ "./public" };
-    static constexpr int         DEFAULT_THREAD_COUNT{ 5 };
-    static constexpr int         DEFAULT_QUEUE_SIZE{ 5 };
-    static const     std::string DEFAULT_CONFIG_FILE{ "server.toml" };
+    // ----- Default config ----- //
+
+    inline static const std::string 
+        DEFAULT_ROOT_PATH{ "./public" };
+
+    static constexpr int 
+        DEFAULT_THREAD_COUNT{ 5 };
+
+    static constexpr int
+        DEFAULT_QUEUE_SIZE{ 5 };
+
+    inline static const std::string 
+        DEFAULT_CONFIG_FILE{ "server.toml" };
+
+    // ----- Methods ----- //
 
     /**
      * Server constructor takes program arguments.

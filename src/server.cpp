@@ -14,6 +14,7 @@
 #include "server.h"
 #include "socket.h"
 #include "responder.h"
+#include "config.h"
 
 #include <string>
 #include <iostream>
@@ -62,17 +63,17 @@ Server::Server(int argc, char* argv[])
 
     // Make sure the HTTP content file exists
     if (!std::filesystem::exists(std::filesystem::path(m_root_path))) {
-        throw Server_err{ "Root path '" + m_root_path + "' doesn't exist" };
+        throw Server_error{ "Root path '" + m_root_path + "' doesn't exist" };
     }
 
     // At least one thread should be available
     if (m_thread_count < 1) {
-        throw Server_err{ "Thread count should be greater than 0" };
+        throw Server_error{ "Thread count should be greater than 0" };
     }
 
     // We can't queue negative number of connections
     if (m_queue_size < 0) {
-        throw Server_err{ "Queue size should be at least 0" };
+        throw Server_error{ "Queue size should be at least 0" };
     }
 
     // All config is setup; the server is ready to work
