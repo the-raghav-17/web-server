@@ -34,7 +34,7 @@ namespace Config
          * allowed to be queued when listening
          * for multiple connections
          */
-        int max_queued_conn{};
+        int queue_size{};
     };
 
     Type parse_config_file(const std::string& file);

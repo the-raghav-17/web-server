@@ -20,22 +20,8 @@
 
 int main(int argc, char* argv[])
 {
-    std::string root_path{ "" };
-
-    if (argc > 2) {
-        std::cerr << "Usage: " << argv[0] << " [root-path]\n";
-        return 1;
-    }
-    else if (argc == 2) {
-        root_path += std::string(argv[1]);
-    }
-    else {
-        // Default root path
-        root_path += std::string("./public/");
-    }
-
     try {
-        Server server{ root_path };
+        Server server{ argc, argv };
         server.start();
     }
     catch (Server_error& err) {

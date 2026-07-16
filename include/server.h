@@ -51,22 +51,14 @@ public:
     static const     std::string DEFAULT_ROOT_PATH{ "./public" };
     static constexpr int         DEFAULT_THREAD_COUNT{ 5 };
     static constexpr int         DEFAULT_QUEUE_SIZE{ 5 };
+    static const     std::string DEFAULT_CONFIG_FILE{ "server.toml" };
 
     /**
-     * Server consturctor takes a path string
-     * to directory where all HTTP content is
-     * stored.
-     * Throws an exception if no such path 
-     * exists.
+     * Server constructor takes program arguments.
+     * It sets up the server configuration based 
+     * on the config file (if any)
      */
-    Server(const std::string& path):
-        m_root_path{ path }
-    {
-        // Check whether the path exists or not
-        if (!std::filesystem::exists(std::filesystem::path{m_root_path})) {
-            throw Server_error{ path + ": No such path exists" };
-        }
-    }
+    Server(int argc, char* argv[]);
 
     /**
      * Method to start an initialized server.
@@ -78,12 +70,24 @@ public:
       start() const;
 
 private:
+    // ----- Data members ----- //
+
     /**
-     * Path string to root of the directory
-     * where all HTTP content is stored
+     * The root directory where all 
+     * HTTP content is stored
      */
-    std::string
-        m_root_path{};
+    std::string m_root_path{};
+
+    /**
+     * No. of worker threads in threadpool
+     */
+    int m_thread_count{};
+
+    /**
+     * No. of connections that can be 
+     * queued while listening
+     */
+    int         m_queue_size{};
 
     // ----- Methods -----//
 

@@ -36,11 +36,54 @@ private:
 Logger log{ "Server" };
 
 
+Server::Server(int argc, char* argv[])
+{
+    std::string config_file{};
+
+    // Parse the arguments
+    if (argc > 2) {
+        // TODO: Error
+    }
+    else if (argc == 2) {
+        // Path to config file is provided
+        config_file += argv[1];
+    }
+    else if (argc == 1) {
+        // No config file provided; use default
+        config_file += DEFAULT_CONFIG_FILE;
+    }
+
+    // Parse the config file
+    auto config{ Config::parse_config_file(config_file) };
+
+    m_root_path    = config.root_path;
+    m_thread_count = config.thread_count;
+    m_queue_size   = config.queue_size;
+
+    // Make sure the HTTP content file exists
+    if (!std::filesystem::exists(std::filesystem::path(m_root_path))) {
+        throw Server_err{ "Root path '" + m_root_path + "' doesn't exist" };
+    }
+
+    // At least one thread should be available
+    if (m_thread_count < 1) {
+        throw Server_err{ "Thread count should be greater than 0" };
+    }
+
+    // We can't queue negative number of connections
+    if (m_queue_size < 0) {
+        throw Server_err{ "Queue size should be at least 0" };
+    }
+
+    // All config is setup; the server is ready to work
+}
+
+
 void
 Server::start() const
 {
     try {
-        Socket socket{ SOCK_STREAM, AF_INET, 0 };
+       Socket socket{ SOCK_STREAM, AF_INET, 0 };
     
         const std::string port_no{ "3490" };
         socket.bind(port_no);
