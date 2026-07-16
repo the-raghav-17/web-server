@@ -46,6 +46,13 @@ class Server
 {
 public:
     /**
+     * Default config settings for the server
+     */
+    static const     std::string DEFAULT_ROOT_PATH{ "./public" };
+    static constexpr int         DEFAULT_THREAD_COUNT{ 5 };
+    static constexpr int         DEFAULT_QUEUE_SIZE{ 5 };
+
+    /**
      * Server consturctor takes a path string
      * to directory where all HTTP content is
      * stored.
