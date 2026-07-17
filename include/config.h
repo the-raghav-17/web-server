@@ -41,5 +41,4 @@ namespace Config
 };
 
 
-
 #endif // CONFIG_H_
