@@ -12,13 +12,19 @@
 
 
 #include "config.h"
+#include "server.h"
+#include "utils.h"
+#include "parser.h"
 
 #include <string>
+#include <filesystem>
+#include <unordered_set>
 
 
-/*
- * Helper functions will be static here
- */
+static void
+fill_config(Config::Type& config, const std::string& param)
+{
+}
 
 
 Config::Type
@@ -29,7 +35,7 @@ Config::parse_config_file(const std::string& file_path,
     struct Type config{
         Server::DEFAULT_ROOT_PATH,
         Server::DEFAULT_THREAD_COUNT,
-        SERVER::DEFAULT_QUEUE_SIZE,
+        Server::DEFAULT_QUEUE_SIZE,
     };
 
     if (!std::filesystem::exists(std::filesystem::path(file_path))) {
@@ -38,21 +44,19 @@ Config::parse_config_file(const std::string& file_path,
             return config;
         }
         // Provided custom config file doesn't exist
-        // TODO: Throw error
+        throw Config::Config_error{ "Config file '" + file_path + "' doesn't exist" };
     }
 
-    std::ifstream file{ file_path };
-    if (!file) {
-        // TODO: Throw error: File error
-    }
-
-    // TODO: Read file contents
+    const std::string file_contents{ Utils::read_file_content(file_path) };
 
     // Divide the config into lines
     const auto config_parts{ Parser::tokenize_string(file_contents, "\r\n") };
 
     if (config_parts.size() > 3) {
-        // TODO: Throw error: Excess parameter count... Expected at most 3 got config_parts.size()
+        throw Config::Config_error{ "Excess config parameters..." 
+                                    "expected at most 3, got "
+                                  + std::to_string(config_parts.size()) 
+        };
     }
 
     // Set to see if a parameter appears more than once
@@ -66,7 +70,7 @@ Config::parse_config_file(const std::string& file_path,
         // Each line must consist of exactly three tokens:
         // 'parameter' '=' 'value'
         if (line_parts.size() != 3) {
-            // TODO: Throw error: Excess tokens
+            throw Config::Config_error{ "Excess tokens in config parameter" };
         }
 
         // For now only 3 parameters are defined:
@@ -80,7 +84,7 @@ Config::parse_config_file(const std::string& file_path,
         // queue = 7
         
         if (line_parts.at(1) != "=") {
-            // TODO: Throw error: Expected "=" got line_parts.at(1)
+            throw Config::Config_error{ "Expected '=', got " + line_parts.at(1) };
         }
 
         const auto& param{ line_parts.at(0) };
@@ -88,7 +92,7 @@ Config::parse_config_file(const std::string& file_path,
 
         // Make sure the parameter only exists once
         if (set.count(param) > 0) {
-            // TODO: Throw error: Param path defined twice
+            throw Config::Config_error{ "Parameter '" + param + "' defined twice" };
         }
         set.insert(param);
         
@@ -96,19 +100,21 @@ Config::parse_config_file(const std::string& file_path,
             config.root_path = value;
         }
         else if (param == "threads") {
-            if (!is_int(value)) {
-                // TODO: Throw error: param threads expected int
-            }
-            config.threads = value;
+            auto int_val{ std::stoi(value) };
+            // if (!int_val) {
+            //     // TODO: Throw error: param threads expected int
+            // }
+            config.thread_count = int_val;
         }
         else if (param == "queue") {
-            if (!is_int(value)) {
-                // TODO: Throw error: param queue expected int
-            }
-            config.queue = value;
+            auto int_val{ std::stoi(value) };
+            // if (!int_val) {
+            //     // TODO: Throw error: param threads expected int
+            // }
+            config.queue_size = int_val;
         }
         else {
-            // TODO: Throw error: Unexpected parameter
+            throw Config::Config_error{ "Unexpected parameter '" + param + "'" };
         }
     }
 

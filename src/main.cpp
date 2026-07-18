@@ -14,6 +14,7 @@
 
 
 #include "server.h"
+#include "config.h"
 
 #include <iostream>
 
@@ -25,8 +26,11 @@ int main(int argc, char* argv[])
         server.start();
     }
     catch (Server_error& err) {
-        std::cerr << "Error: Server: " + std::string{ err.what() } << '\n';
+        std::cerr << "Error: Server: " << err.what() << '\n';
         return 1;
+    }
+    catch (Config::Config_error& err) {
+        std::cerr << "Error: Config: " << err.what() << '\n';
     }
     catch (...) {
         std::cerr << "Some unknown exception caught...\n";

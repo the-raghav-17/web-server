@@ -11,6 +11,7 @@
 
 
 #include <string>
+#include <stdexcept>
 
 
 namespace Config
@@ -39,6 +40,13 @@ namespace Config
 
     Type parse_config_file(const std::string& file,
                            const std::string& default_conf_file);
+    
+    class Config_error : public std::runtime_error {
+    public:
+        Config_error(const std::string& err_msg):
+            runtime_error{ err_msg }
+        {}
+    };
 };
 
 

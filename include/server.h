@@ -22,6 +22,7 @@
 #include "http.h"
 
 #include <filesystem>
+#include <stdexcept>
 
 
 /**
