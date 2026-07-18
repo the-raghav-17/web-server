@@ -22,7 +22,8 @@
 
 
 Config::Type
-Config::parse_config_file(const std::string& file_path)
+Config::parse_config_file(const std::string& file_path,
+                          const std::string& default_config_file)
 {
     // TODO: Logic for file handling
     // ...
@@ -43,9 +44,9 @@ Config::parse_config_file(const std::string& file_path)
 
     // Struct to return
     struct Type config{
-        .root_path    = Server::DEFAULT_ROOT_PATH;
-        .thread_count = Server::DEFAULT_THREAD_COUNT;
-        .queue_size   = SERVER::DEFAULT_QUEUE_SIZE;
+        Server::DEFAULT_ROOT_PATH,
+        Server::DEFAULT_THREAD_COUNT,
+        SERVER::DEFAULT_QUEUE_SIZE,
     };
 
     // Set to see if a parameter appears more than once

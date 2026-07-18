@@ -95,7 +95,7 @@ private:
      * No. of connections that can be 
      * queued while listening
      */
-    int         m_queue_size{};
+    int m_queue_size{};
 
     // ----- Methods -----//
 

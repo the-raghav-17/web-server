@@ -55,7 +55,9 @@ Server::Server(int argc, char* argv[])
     }
 
     // Parse the config file
-    auto config{ Config::parse_config_file(config_file) };
+    auto config{ Config::parse_config_file(config_file,
+                                           DEFAULT_CONFIG_FILE) 
+    };
 
     m_root_path    = config.root_path;
     m_thread_count = config.thread_count;

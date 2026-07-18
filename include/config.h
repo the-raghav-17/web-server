@@ -37,7 +37,8 @@ namespace Config
         int queue_size{};
     };
 
-    Type parse_config_file(const std::string& file);
+    Type parse_config_file(const std::string& file,
+                           const std::string& default_conf_file);
 };
 
 
