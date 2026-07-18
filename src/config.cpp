@@ -25,9 +25,22 @@ Config::Type
 Config::parse_config_file(const std::string& file_path,
                           const std::string& default_config_file)
 {
-    // TODO: Logic for file handling
-    // ...
-    // Assume config file was opened as file_contents
+    // Struct to return
+    struct Type config{
+        Server::DEFAULT_ROOT_PATH,
+        Server::DEFAULT_THREAD_COUNT,
+        SERVER::DEFAULT_QUEUE_SIZE,
+    };
+
+    if (!std::filesystem::exists(std::filesystem::path(file_path))) {
+        if (file_path == default_config_file) {
+            // TODO: Create default file
+            return config;
+        }
+        // Provided custom config file doesn't exist
+        // TODO: Throw error
+    }
+
     std::ifstream file{ file_path };
     if (!file) {
         // TODO: Throw error: File error
@@ -41,13 +54,6 @@ Config::parse_config_file(const std::string& file_path,
     if (config_parts.size() > 3) {
         // TODO: Throw error: Excess parameter count... Expected at most 3 got config_parts.size()
     }
-
-    // Struct to return
-    struct Type config{
-        Server::DEFAULT_ROOT_PATH,
-        Server::DEFAULT_THREAD_COUNT,
-        SERVER::DEFAULT_QUEUE_SIZE,
-    };
 
     // Set to see if a parameter appears more than once
     std::unordered_set<std::string> set{};
