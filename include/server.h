@@ -58,7 +58,7 @@ public:
         DEFAULT_QUEUE_SIZE{ 5 };
 
     inline static const std::string 
-        DEFAULT_CONFIG_FILE{ "server.toml" };
+        DEFAULT_CONFIG_FILE{ "server.conf" };
 
     // ----- Methods ----- //
 

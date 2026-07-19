@@ -18,13 +18,8 @@
 
 #include <string>
 #include <filesystem>
+#include <iostream>
 #include <unordered_set>
-
-
-static void
-fill_config(Config::Type& config, const std::string& param)
-{
-}
 
 
 Config::Type
@@ -38,7 +33,9 @@ Config::parse_config_file(const std::string& file_path,
         Server::DEFAULT_QUEUE_SIZE,
     };
 
+    // If given file doesn't exist
     if (!std::filesystem::exists(std::filesystem::path(file_path))) {
+        // FIX: file_path comparison with default_config_file is wrong, use filesystem function
         if (file_path == default_config_file) {
             // TODO: Create default file
             return config;
@@ -50,7 +47,7 @@ Config::parse_config_file(const std::string& file_path,
     const std::string file_contents{ Utils::read_file_content(file_path) };
 
     // Divide the config into lines
-    const auto config_parts{ Parser::tokenize_string(file_contents, "\r\n") };
+    const auto config_parts{ Parser::tokenize_string(file_contents, "\n") };
 
     if (config_parts.size() > 3) {
         throw Config::Config_error{ "Excess config parameters..." 
