@@ -17,14 +17,40 @@
 #include "parser.h"
 
 #include <string>
+#include <fstream>
 #include <filesystem>
 #include <iostream>
 #include <unordered_set>
 
 
+static std::string
+get_config_string(const Config::Type& config)
+{
+    std::string str{};
+
+    str += "path = "    + config.root_path                    + "\n"
+         + "threads = " + std::to_string(config.thread_count) + "\n"
+         + "queue = "   + std::to_string(config.queue_size);
+}
+
+
+static void
+create_default_conf_file(const std::string& default_config_path,
+                         const Config::Type& config)
+{
+    std::ofstream outfile{ default_config_path };
+    if (!outfile) {
+        // TODO: Error handling
+    }
+
+    const auto config_string{ get_config_string(config) };
+    outfile << config_string;
+}
+
+
 Config::Type
-Config::parse_config_file(const std::string& file_path,
-                          const std::string& default_config_file)
+Config::parse_config_file(const std::string& config_path,
+                          const std::string& default_config_path)
 {
     // Struct to return
     struct Type config{
@@ -34,17 +60,17 @@ Config::parse_config_file(const std::string& file_path,
     };
 
     // If given file doesn't exist
-    if (!std::filesystem::exists(std::filesystem::path(file_path))) {
-        // FIX: file_path comparison with default_config_file is wrong, use filesystem function
-        if (file_path == default_config_file) {
-            // TODO: Create default file
+    if (!std::filesystem::exists(std::filesystem::path(config_path))) {
+        // FIX: config_path comparison with default_config_path is wrong, use filesystem function
+        if (config_path == default_config_path) {
+            create_default_conf_file(default_config_path, config);
             return config;
         }
         // Provided custom config file doesn't exist
-        throw Config::Config_error{ "Config file '" + file_path + "' doesn't exist" };
+        throw Config::Config_error{ "Config file '" + config_path + "' doesn't exist" };
     }
 
-    const std::string file_contents{ Utils::read_file_content(file_path) };
+    const std::string file_contents{ Utils::read_file_content(config_path) };
 
     // Divide the config into lines
     const auto config_parts{ Parser::tokenize_string(file_contents, "\n") };
