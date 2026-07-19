@@ -4,4 +4,5 @@
 build/
 public/
 test*
-server
+fill_copyright*
+server*

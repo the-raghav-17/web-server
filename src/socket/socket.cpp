@@ -1,4 +1,10 @@
 /*
+ * SPDX-License-Identifier: GNU GPLv3
+ * Copyright (c) 2026 Raghav Sharma
+ * GitHub: https://github.com/the-raghav-17
+ */
+
+/*
  * Copyright (c) 2026 Raghav Sharma
  * License: GNU GPLv3
  * GitHub: github.com/the-raghav-17

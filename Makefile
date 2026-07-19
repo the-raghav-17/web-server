@@ -1,13 +1,11 @@
 CXX      := g++
-CXXFLAGS := -Wall -Wextra -std=c++17 -pedantic -MMD
+CXXFLAGS := -Wall -Wextra -std=c++17 -pedantic -MMD -g
 INCL     := -Iinclude
 
 SRC_DIR   := src
 BUILD_DIR := build
 
-MODULES := $(SRC_DIR) $(SRC_DIR)/socket $(SRC_DIR)/parser
-
-SRCS   := $(shell find $(MODULES) -maxdepth 1 -name '*.cpp')
+SRCS   := $(shell find $(SRC_DIR) -name '*.cpp')
 OBJS   := $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 DEPS   := $(OBJS:%.o=%.d)
 TARGET := server

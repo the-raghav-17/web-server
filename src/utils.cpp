@@ -1,3 +1,9 @@
+/*
+ * SPDX-License-Identifier: GNU GPLv3
+ * Copyright (c) 2026 Raghav Sharma
+ * GitHub: https://github.com/the-raghav-17
+ */
+
 #include "utils.h"
 
 #include <string>

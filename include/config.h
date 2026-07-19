@@ -1,4 +1,10 @@
 /*
+ * SPDX-License-Identifier: GNU GPLv3
+ * Copyright (c) 2026 Raghav Sharma
+ * GitHub: https://github.com/the-raghav-17
+ */
+
+/*
  * config.h
  *
  * Types and functions necessary
