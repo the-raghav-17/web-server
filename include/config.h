@@ -14,6 +14,7 @@
 #include <stdexcept>
 
 
+// TODO: Add comments for config functions
 namespace Config
 {
     struct Type

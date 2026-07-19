@@ -31,6 +31,8 @@ get_config_string(const Config::Type& config)
     str += "path = "    + config.root_path                    + "\n"
          + "threads = " + std::to_string(config.thread_count) + "\n"
          + "queue = "   + std::to_string(config.queue_size);
+
+    return str;
 }
 
 
